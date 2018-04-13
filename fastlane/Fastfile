@@ -1,3 +1,11 @@
-lane :test do
-  flutter
+lane :build do
+  flutter(action: 'l10n', l10n_strings_file: 'lib/messages.dart')
+  flutter(action: 'format')
+  flutter(action: 'analyze')
+end
+
+platform :android do
+  lane :build do
+    flutter(action: 'build', debug: true)
+  end
 end
