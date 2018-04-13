@@ -23,8 +23,9 @@ module Fastlane
           flutter_platforms = %w(apk ios)
 
           # Override if we are on a specific platform (non-root lane).
-          flutter_platforms = [PLATFORM_TO_FLUTTER[
-            lane_context[SharedValues::PLATFORM_NAME]]]
+          if fastlane_platform = lane_context[SharedValues::PLATFORM_NAME]
+            flutter_platforms = [PLATFORM_TO_FLUTTER[fastlane_platform]]
+          end
 
           flutter_platforms.each do |platform|
             sh "flutter build #{platform} #{debug_key}"
