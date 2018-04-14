@@ -1,9 +1,10 @@
 describe Fastlane::Actions::FlutterAction do
-  describe '#run' do
-    it 'prints a message' do
-      expect(Fastlane::UI).to receive(:message).with("The flutter plugin is working!")
+  describe '#run:format' do
+    it 'runs a "flutter format" command' do
+      expect(Fastlane::Actions::FlutterAction).to receive(:sh).
+        with('flutter', 'format', 'lib')
 
-      Fastlane::Actions::FlutterAction.run(nil)
+      Fastlane::Actions::FlutterAction.run(action: 'format', lib_path: 'lib')
     end
   end
 end
