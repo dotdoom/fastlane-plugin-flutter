@@ -46,8 +46,6 @@ module Fastlane
                       File.absolute_path($1)
                   end
                 end
-              else
-                UI.error 'Flutter build failed'
               end
             end
           end
