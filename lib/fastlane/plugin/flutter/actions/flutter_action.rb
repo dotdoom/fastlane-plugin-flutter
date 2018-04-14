@@ -33,22 +33,27 @@ module Fastlane
           additional_args = []
           additional_args.push('--debug') if params[:debug]
 
+          built_files = {}
+
           flutter_platforms.each do |platform|
             sh('flutter', 'build', platform, *additional_args) do |status, res|
               if status.success?
                 # Dirty hacks ahead!
                 if FLUTTER_TO_OUTPUT.key?(platform)
                   # Examples:
-                  # Built /Users/foo/src/flutter/build/output/my.app.
-                  # Built /Users/foo/src/flutter/build/output/my.apk (32.4MB).
+                  # Built /Users/foo/src/flutter/build/output/myapp.app.
+                  # Built build/output/myapp.apk (32.4MB).
                   if res =~ /^Built (.*?)(:? \([^)]*\))?\.$/
-                    lane_context[FLUTTER_TO_OUTPUT[platform]] =
-                      File.absolute_path($1)
+                    built_file = File.absolute_path($1)
+                    built_files[PLATFORM_TO_FLUTTER.key(platform)] = built_file
+                    lane_context[FLUTTER_TO_OUTPUT[platform]] = built_file
                   end
                 end
               end
             end
           end
+
+          built_files
         when 'test'
           sh *%w(flutter test)
         when 'analyze'
@@ -94,7 +99,9 @@ module Fastlane
       end
 
       def self.return_value
-        # If your method provides a return value, you can describe here what it does
+        'For "build" action, the return value is a mapping of fastlane ' +
+          'platform names into built output files, e.g.: ' +
+          { android: '/Users/foo/src/flutter/build/outputs/myapp.apk' }.inspect
       end
 
       def self.details
