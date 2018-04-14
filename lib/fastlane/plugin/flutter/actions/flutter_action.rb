@@ -56,9 +56,22 @@ module Fastlane
         when 'format'
           sh *%W(flutter format #{params[:lib_path]})
         when 'l10n'
+          l10n_messages_file = File.join(params[:lib_path], 'l10n',
+                                         'intl_messages.arb')
+          l10n_messages_was = File.read(l10n_messages_file)
+
           output_dir = File.join(params[:lib_path], 'l10n')
           sh *%W(flutter pub pub run intl_translation:extract_to_arb
             --output-dir=#{output_dir} #{params[:l10n_strings_file]})
+
+          # intl will update @@last_modified even if there are no updates;
+          # this leaves Git directory unnecessary dirty. If that's the only
+          # change, just restore the previous contents.
+          if Helper::FlutterHelper.restore_l10n_timestamp(
+              l10n_messages_file, l10n_messages_was)
+            UI.message(
+              "@@last_modified has been restored in #{l10n_messages_file}")
+          end
 
           # messages_all.dart will have files ordered as in the command line.
           arb_files = Dir.glob(File.join(output_dir, 'intl_*.arb')).sort
