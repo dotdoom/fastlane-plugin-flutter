@@ -81,9 +81,10 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :debug,
             env_name: 'FL_FLUTTER_DEBUG',
-            description: 'true if Flutter should build a Debug version of the app',
+            description: 'Build a Debug version of the app if true',
             optional: true,
-            type: true.class,
+            is_string: false,
+            default_value: false,
           ),
           FastlaneCore::ConfigItem.new(
             key: :lib_path,
