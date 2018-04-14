@@ -56,11 +56,10 @@ module Fastlane
         when 'format'
           sh *%W(flutter format #{params[:lib_path]})
         when 'l10n'
-          l10n_messages_file = File.join(params[:lib_path], 'l10n',
-                                         'intl_messages.arb')
+          output_dir = File.join(params[:lib_path], 'l10n')
+          l10n_messages_file = File.join(output_dir, 'intl_messages.arb')
           l10n_messages_was = File.read(l10n_messages_file)
 
-          output_dir = File.join(params[:lib_path], 'l10n')
           sh *%W(flutter pub pub run intl_translation:extract_to_arb
             --output-dir=#{output_dir} #{params[:l10n_strings_file]})
 
@@ -73,8 +72,11 @@ module Fastlane
               "@@last_modified has been restored in #{l10n_messages_file}")
           end
 
-          # messages_all.dart will have files ordered as in the command line.
+          # Sort files for consistency, because messages_all.dart will have
+          # imports ordered as in the command line below.
           arb_files = Dir.glob(File.join(output_dir, 'intl_*.arb')).sort
+          # Don't generate .dart for the original ARB, messages_all.dart has it.
+          arb_files.delete(l10n_messages_file)
 
           sh *%W(flutter pub pub run intl_translation:generate_from_arb
             --output-dir=#{output_dir}
