@@ -1,6 +1,5 @@
 require 'fastlane/action'
 require_relative '../helper/flutter_helper'
-require 'shellwords'
 
 module Fastlane
   module Actions
@@ -19,33 +18,35 @@ module Fastlane
       def self.run(params)
         case params[:action]
         when 'build'
-          debug_key = '--debug' if params[:debug]
           flutter_platforms = %w(apk ios)
-
           # Override if we are on a specific platform (non-root lane).
           if fastlane_platform = lane_context[SharedValues::PLATFORM_NAME]
             flutter_platforms = [PLATFORM_TO_FLUTTER[fastlane_platform]]
           end
 
+          additional_args = []
+          additional_args.push('--debug') if params[:debug]
+
           flutter_platforms.each do |platform|
-            sh "flutter build #{platform} #{debug_key}"
+            sh('flutter', 'build', platform, *additional_args)
           end
         when 'test'
-          sh 'flutter test'
+          sh *%w(flutter test)
         when 'analyze'
-          sh "flutter analyze #{params[:lib_path].shellescape}"
+          sh *%W(flutter analyze #{params[:lib_path]})
         when 'format'
-          sh "flutter format #{params[:lib_path].shellescape}"
+          sh *%W(flutter format #{params[:lib_path]})
         when 'l10n'
           output_dir = File.join(params[:lib_path], 'l10n')
-          sh 'flutter pub pub run intl_translation:extract_to_arb ' +
-            "--output-dir=#{output_dir.shellescape} " +
-            "#{params[:l10n_strings_file].shellescape}"
-          sh 'flutter pub pub run intl_translation:generate_from_arb ' +
-            "--output-dir=#{output_dir.shellescape} " +
-            "--no-use-deferred-loading " +
-            "#{params[:l10n_strings_file].shellescape} " +
-            "#{output_dir.shellescape}/intl_*.arb"
+          sh *%W(flutter pub pub run intl_translation:extract_to_arb
+            --output-dir=#{output_dir} #{params[:l10n_strings_file]})
+
+          arb_files = Dir.glob(File.join(output_dir, 'intl_*.arb'))
+
+          sh *%W(flutter pub pub run intl_translation:generate_from_arb
+            --output-dir=#{output_dir}
+            --no-use-deferred-loading
+            #{params[:l10n_strings_file]}) + arb_files
         end
       end
 
