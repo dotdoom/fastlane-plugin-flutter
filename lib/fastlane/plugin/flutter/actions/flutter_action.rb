@@ -62,7 +62,8 @@ module Fastlane
           sh *%W(flutter pub pub run intl_translation:extract_to_arb
             --output-dir=#{output_dir} #{params[:l10n_strings_file]})
 
-          arb_files = Dir.glob(File.join(output_dir, 'intl_*.arb'))
+          # messages_all.dart will have files ordered as in the command line.
+          arb_files = Dir.glob(File.join(output_dir, 'intl_*.arb')).sort
 
           sh *%W(flutter pub pub run intl_translation:generate_from_arb
             --output-dir=#{output_dir}
