@@ -66,15 +66,17 @@ module Fastlane
           l10n_messages_was = File.read(l10n_messages_file)
 
           sh *%W(flutter pub pub run intl_translation:extract_to_arb
-            --output-dir=#{output_dir} #{params[:l10n_strings_file]})
+                 --output-dir=#{output_dir} #{params[:l10n_strings_file]})
 
           # intl will update @@last_modified even if there are no updates;
           # this leaves Git directory unnecessary dirty. If that's the only
           # change, just restore the previous contents.
           if Helper::FlutterHelper.restore_l10n_timestamp(
-              l10n_messages_file, l10n_messages_was)
+            l10n_messages_file, l10n_messages_was
+          )
             UI.message(
-              "@@last_modified has been restored in #{l10n_messages_file}")
+              "@@last_modified has been restored in #{l10n_messages_file}"
+            )
           end
 
           # Sort files for consistency, because messages_all.dart will have
@@ -84,9 +86,9 @@ module Fastlane
           arb_files.delete(l10n_messages_file)
 
           sh *%W(flutter pub pub run intl_translation:generate_from_arb
-            --output-dir=#{output_dir}
-            --no-use-deferred-loading
-            #{params[:l10n_strings_file]}) + arb_files
+                 --output-dir=#{output_dir}
+                 --no-use-deferred-loading
+                 #{params[:l10n_strings_file]}) + arb_files
         end
       end
 
@@ -99,7 +101,7 @@ module Fastlane
       end
 
       def self.return_value
-        'For "build" action, the return value is a mapping of fastlane ' +
+        'For "build" action, the return value is a mapping of fastlane ' \
           'platform names into built output files, e.g.: ' +
           { android: '/Users/foo/src/flutter/build/outputs/myapp.apk' }.inspect
       end
@@ -136,7 +138,7 @@ module Fastlane
             optional: true,
             default_value: 'lib',
             verify_block: proc do |value|
-              UI.user_error!('Directory does not exist') unless Dir.exists?(value)
+              UI.user_error!('Directory does not exist') unless Dir.exist?(value)
             end,
           ),
           FastlaneCore::ConfigItem.new(
@@ -145,7 +147,7 @@ module Fastlane
             description: 'Path to the .dart file with l10n strings',
             optional: true,
             verify_block: proc do |value|
-              UI.user_error!('File does not exist') unless File.exists?(value)
+              UI.user_error!('File does not exist') unless File.exist?(value)
             end,
           ),
         ]

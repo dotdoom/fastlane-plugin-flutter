@@ -7,9 +7,7 @@ module Fastlane
   module Helper
     class FlutterHelper
       def self.restore_l10n_timestamp(file_name, old_content)
-        new_content_tree = File.open(file_name) do |f|
-          JSON.load(f)
-        end
+        new_content_tree = JSON.parse(File.read(file_name))
         old_content_tree = JSON.parse(old_content)
 
         new_content_tree['@@last_modified'] =
