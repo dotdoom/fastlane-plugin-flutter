@@ -4,7 +4,8 @@ require_relative '../helper/flutter_helper'
 module Fastlane
   module Actions
     module SharedValues
-      FLUTTER_OUTPUT_FILE = :FLUTTER_OUTPUT_FILE
+      FLUTTER_OUTPUT_APP = :FLUTTER_OUTPUT_APP
+      FLUTTER_OUTPUT_APK = :FLUTTER_OUTPUT_APK
     end
 
     class FlutterAction < Action
@@ -13,6 +14,11 @@ module Fastlane
       PLATFORM_TO_FLUTTER = {
         ios: 'ios',
         android: 'apk',
+      }
+
+      FLUTTER_TO_OUTPUT = {
+        'ios' => SharedValues::FLUTTER_OUTPUT_APP,
+        'apk' => SharedValues::FLUTTER_OUTPUT_APK,
       }
 
       def self.run(params)
@@ -28,7 +34,22 @@ module Fastlane
           additional_args.push('--debug') if params[:debug]
 
           flutter_platforms.each do |platform|
-            sh('flutter', 'build', platform, *additional_args)
+            sh('flutter', 'build', platform, *additional_args) do |status, res|
+              if status.success?
+                # Dirty hacks ahead!
+                if FLUTTER_TO_OUTPUT.key?(platform)
+                  # Examples:
+                  # Built /Users/foo/src/flutter/build/output/my.app.
+                  # Built /Users/foo/src/flutter/build/output/my.apk (32.4MB).
+                  if res =~ /^Built (.*?)(:? \([^)]*\))?\.$/
+                    lane_context[FLUTTER_TO_OUTPUT[platform]] =
+                      File.absolute_path($1)
+                  end
+                end
+              else
+                UI.error 'Flutter build failed'
+              end
+            end
           end
         when 'test'
           sh *%w(flutter test)
