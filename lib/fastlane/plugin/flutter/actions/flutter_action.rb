@@ -49,6 +49,9 @@ module Fastlane
                     lane_context[FLUTTER_TO_OUTPUT[platform]] = built_file
                   end
                 end
+              else
+                # fastlane does not fail automatically if we provide a block.
+                UI.user_error! "flutter build #{platform} has failed."
               end
             end
           end
