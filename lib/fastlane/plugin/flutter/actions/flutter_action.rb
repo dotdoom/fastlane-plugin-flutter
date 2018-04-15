@@ -61,22 +61,32 @@ module Fastlane
         when 'format'
           sh *%W(flutter format #{params[:lib_path]})
         when 'l10n'
+          unless params[:l10n_strings_file]
+            UI.user_error!('l10n_strings_file is a required parameter for ' \
+                           'l10n action')
+          end
+
           output_dir = File.join(params[:lib_path], 'l10n')
           l10n_messages_file = File.join(output_dir, 'intl_messages.arb')
-          l10n_messages_was = File.read(l10n_messages_file)
+          # This file will not exist before it's generated for the first time.
+          if File.exist?(l10n_messages_file)
+            l10n_messages_was = File.read(l10n_messages_file)
+          end
 
           sh *%W(flutter pub pub run intl_translation:extract_to_arb
                  --output-dir=#{output_dir} #{params[:l10n_strings_file]})
 
-          # intl will update @@last_modified even if there are no updates;
-          # this leaves Git directory unnecessary dirty. If that's the only
-          # change, just restore the previous contents.
-          if Helper::FlutterHelper.restore_l10n_timestamp(
-            l10n_messages_file, l10n_messages_was
-          )
-            UI.message(
-              "@@last_modified has been restored in #{l10n_messages_file}"
+          if l10n_messages_was
+            # intl will update @@last_modified even if there are no updates;
+            # this leaves Git directory unnecessary dirty. If that's the only
+            # change, just restore the previous contents.
+            if Helper::FlutterHelper.restore_l10n_timestamp(
+              l10n_messages_file, l10n_messages_was
             )
+              UI.message(
+                "@@last_modified has been restored in #{l10n_messages_file}"
+              )
+            end
           end
 
           # Sort files for consistency, because messages_all.dart will have
