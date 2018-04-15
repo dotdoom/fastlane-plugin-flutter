@@ -166,6 +166,7 @@ Style/MethodCallWithArgsParentheses:
   - private_lane
   - platform
   - to
+  - not_to
   - describe
   - it
   - be
