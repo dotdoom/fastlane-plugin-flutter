@@ -51,7 +51,7 @@ module Fastlane
                 end
               else
                 # fastlane does not fail automatically if we provide a block.
-                UI.user_error! "flutter build #{platform} has failed."
+                UI.user_error!("flutter build #{platform} has failed.")
               end
             end
           end
