@@ -23,6 +23,12 @@ module Fastlane
 
         false
       end
+
+      def self.reformat_arb(file_name)
+        pretty_content = JSON.pretty_generate(JSON.parse(File.read(file_name)))
+
+        File.write(file_name, pretty_content + "\n")
+      end
     end
   end
 end

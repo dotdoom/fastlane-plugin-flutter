@@ -98,6 +98,12 @@ module Fastlane
           # Don't generate .dart for the original ARB, messages_all.dart has it.
           arb_files.delete(l10n_messages_file)
 
+          if params[:l10n_reformat_arb]
+            arb_files.each do |arb_file|
+              Helper::FlutterHelper.reformat_arb(arb_file)
+            end
+          end
+
           sh *%W(flutter pub pub run intl_translation:generate_from_arb
                  --output-dir=#{output_dir}
                  --no-use-deferred-loading
@@ -162,6 +168,14 @@ module Fastlane
             verify_block: proc do |value|
               UI.user_error!('File does not exist') unless File.exist?(value)
             end,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :l10n_reformat_arb,
+            env_name: 'FL_FLUTTER_L10N_REFORMAT_ARB',
+            description: 'Reformat .arb files',
+            optional: true,
+            is_string: false,
+            default_value: false,
           ),
         ]
       end

@@ -1,5 +1,7 @@
 lane :build do
-  flutter(action: 'l10n', l10n_strings_file: 'lib/messages.dart')
+  flutter(action: 'l10n',
+          l10n_strings_file: 'lib/messages.dart',
+          l10n_reformat_arb: true)
   flutter(action: 'format')
   flutter(action: 'analyze')
 end
