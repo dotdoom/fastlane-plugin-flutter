@@ -60,16 +60,16 @@ module Fastlane
         when 'test'
           sh *%w(flutter test)
         when 'analyze'
-          sh *%W(flutter analyze #{params[:lib_path]})
+          sh *%W(flutter analyze)
         when 'format'
-          sh *%W(flutter format #{params[:lib_path]})
+          sh *%W(flutter format .)
         when 'l10n'
           unless params[:l10n_strings_file]
             UI.user_error!('l10n_strings_file is a required parameter for ' \
                            'l10n action')
           end
 
-          output_dir = File.join(params[:lib_path], 'l10n')
+          output_dir = 'lib/l10n'
           l10n_messages_file = File.join(output_dir, 'intl_messages.arb')
           # This file will not exist before it's generated for the first time.
           if File.exist?(l10n_messages_file)
@@ -149,16 +149,6 @@ module Fastlane
             optional: true,
             is_string: false,
             default_value: false,
-          ),
-          FastlaneCore::ConfigItem.new(
-            key: :lib_path,
-            env_name: 'FL_FLUTTER_LIB_PATH',
-            description: "Path to Flutter 'lib' directory",
-            optional: true,
-            default_value: 'lib',
-            verify_block: proc do |value|
-              UI.user_error!('Directory does not exist') unless Dir.exist?(value)
-            end,
           ),
           FastlaneCore::ConfigItem.new(
             key: :l10n_strings_file,
