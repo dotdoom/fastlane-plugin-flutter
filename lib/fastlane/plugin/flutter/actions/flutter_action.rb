@@ -60,9 +60,9 @@ module Fastlane
         when 'test'
           sh *%w(flutter test)
         when 'analyze'
-          sh *%W(flutter analyze)
+          sh *%w(flutter analyze)
         when 'format'
-          sh *%W(flutter format .)
+          sh *%w(flutter format .)
         when 'l10n'
           unless params[:l10n_strings_file]
             UI.user_error!('l10n_strings_file is a required parameter for ' \
