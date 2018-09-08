@@ -100,6 +100,7 @@ module Fastlane
 
           if params[:l10n_reformat_arb]
             arb_files.each do |arb_file|
+              UI.message("Reformatting file #{arb_file}...")
               Helper::FlutterHelper.reformat_arb(arb_file)
             end
           end
