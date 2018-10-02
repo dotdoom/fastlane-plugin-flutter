@@ -81,8 +81,9 @@ module Fastlane
 
           extract_to_arb_options = ["--output-dir=#{output_dir}"]
           if params[:l10n_strings_locale]
-            extract_to_arb_options =
-              ["--locale=#{params[:l10n_strings_locale]}"]
+            extract_to_arb_options.push(
+              "--locale=#{params[:l10n_strings_locale]}"
+            )
           end
 
           sh *%w(flutter pub pub run intl_translation:extract_to_arb),
