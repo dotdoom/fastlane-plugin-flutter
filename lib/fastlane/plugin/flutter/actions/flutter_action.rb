@@ -1,6 +1,9 @@
 require 'fastlane/action'
 require_relative '../helper/flutter_helper'
 
+# This is the entry point for this plugin. For more information on writing
+# plugins: https://docs.fastlane.tools/advanced/
+
 module Fastlane
   module Actions
     module SharedValues
@@ -76,8 +79,14 @@ module Fastlane
             l10n_messages_was = File.read(l10n_messages_file)
           end
 
-          sh *%W(flutter pub pub run intl_translation:extract_to_arb
-                 --output-dir=#{output_dir} #{params[:l10n_strings_file]})
+          extract_to_arb_options = ["--output-dir=#{output_dir}"]
+          if params[:l10n_strings_locale]
+            extract_to_arb_options =
+              ["--locale=#{params[:l10n_strings_locale]}"]
+          end
+
+          sh *%w(flutter pub pub run intl_translation:extract_to_arb),
+             *extract_to_arb_options, params[:l10n_strings_file]
 
           if l10n_messages_was
             # intl will update @@last_modified even if there are no updates;
@@ -95,8 +104,12 @@ module Fastlane
           # Sort files for consistency, because messages_all.dart will have
           # imports ordered as in the command line below.
           arb_files = Dir.glob(File.join(output_dir, 'intl_*.arb')).sort
-          # Don't generate .dart for the original ARB, messages_all.dart has it.
-          arb_files.delete(l10n_messages_file)
+
+          unless params[:l10n_strings_locale]
+            # Don't generate .dart for the original ARB unless it has its own
+            # locale.
+            arb_files.delete(l10n_messages_file)
+          end
 
           if params[:l10n_reformat_arb]
             arb_files.each do |arb_file|
@@ -151,6 +164,7 @@ module Fastlane
             is_string: false,
             default_value: false,
           ),
+          # l10n settings
           FastlaneCore::ConfigItem.new(
             key: :l10n_strings_file,
             env_name: 'FL_FLUTTER_L10N_STRINGS',
@@ -159,6 +173,12 @@ module Fastlane
             verify_block: proc do |value|
               UI.user_error!('File does not exist') unless File.exist?(value)
             end,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :l10n_strings_locale,
+            env_name: 'FL_FLUTTER_L10N_STRINGS_LOCALE',
+            description: 'Locale of the data in l10n_strings_file',
+            optional: true,
           ),
           FastlaneCore::ConfigItem.new(
             key: :l10n_reformat_arb,
