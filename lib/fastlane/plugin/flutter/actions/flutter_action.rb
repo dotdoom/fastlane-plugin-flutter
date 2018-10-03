@@ -118,7 +118,7 @@ module Fastlane
               errors = Helper::FlutterHelper.compare_arb(l10n_messages_file,
                                                          arb_file)
               if errors.any?
-                errors.each(&UI.method(:error))
+                errors.each { |e| UI.error(e) }
               end
             end
           end
