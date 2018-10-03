@@ -24,7 +24,7 @@ describe Fastlane::Actions::FlutterAction do
                  lib/localization.dart lib/l10n/intl_en.arb))
 
       Fastlane::Actions::FlutterAction.run(
-        action: 'l10n', lib_path: 'lib',
+        action: 'l10n',
         l10n_strings_file: 'lib/localization.dart'
       )
     end
@@ -45,7 +45,7 @@ describe Fastlane::Actions::FlutterAction do
                  lib/l10n/intl_messages.arb))
 
       Fastlane::Actions::FlutterAction.run(
-        action: 'l10n', lib_path: 'lib',
+        action: 'l10n',
         l10n_strings_file: 'lib/localization.dart',
         l10n_strings_locale: 'en',
       )
@@ -85,7 +85,7 @@ describe Fastlane::Actions::FlutterAction do
                  lib/localization.dart lib/l10n/intl_en.arb))
 
       Fastlane::Actions::FlutterAction.run(
-        action: 'l10n', lib_path: 'lib',
+        action: 'l10n',
         l10n_strings_file: 'lib/localization.dart'
       )
     end
@@ -121,7 +121,7 @@ describe Fastlane::Actions::FlutterAction do
                  lib/localization.dart lib/l10n/intl_en.arb))
 
       Fastlane::Actions::FlutterAction.run(
-        action: 'l10n', lib_path: 'lib',
+        action: 'l10n',
         l10n_strings_file: 'lib/localization.dart'
       )
     end
