@@ -9,6 +9,8 @@ module Fastlane
     module SharedValues
       FLUTTER_OUTPUT_APP = :FLUTTER_OUTPUT_APP
       FLUTTER_OUTPUT_APK = :FLUTTER_OUTPUT_APK
+      FLUTTER_OUTPUT_GIT_BUILD_NUMBER = :FLUTTER_OUTPUT_GIT_BUILD_NUMBER
+      FLUTTER_OUTPUT_GIT_BUILD_NAME = :FLUTTER_OUTPUT_GIT_BUILD_NAME
     end
 
     class FlutterAction < Action
@@ -35,6 +37,18 @@ module Fastlane
 
           additional_args = []
           additional_args.push('--debug') if params[:debug]
+
+          if params[:git_version]
+            build_number = sh(*%w(git rev-list --count HEAD)).strip.to_i
+            lane_context[SharedValues::FLUTTER_OUTPUT_GIT_BUILD_NUMBER] =
+              build_number
+            additional_args.push('--build-number', build_number.to_s)
+
+            build_name = sh(*%w(git describe --tags --dirty=*)).strip
+            lane_context[SharedValues::FLUTTER_OUTPUT_GIT_BUILD_NAME] =
+              build_name
+            additional_args.push('--build-name', build_name)
+          end
 
           built_files = {}
 
@@ -179,6 +193,14 @@ module Fastlane
             key: :debug,
             env_name: 'FL_FLUTTER_DEBUG',
             description: 'Build a Debug version of the app if true',
+            optional: true,
+            is_string: false,
+            default_value: false,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :git_version,
+            env_name: 'FL_FLUTTER_GIT_VERSION',
+            description: 'Set build number and name based on Git',
             optional: true,
             is_string: false,
             default_value: false,
