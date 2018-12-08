@@ -44,7 +44,13 @@ module Fastlane
               build_number
             additional_args.push('--build-number', build_number.to_s)
 
-            build_name = sh(*%w(git describe --tags --dirty=*)).strip
+            build_name = sh(
+              *%W(
+                git describe
+                --tags
+                --dirty=#{params[:git_version_dirty_mark]}
+              )
+            ).strip
             lane_context[SharedValues::FLUTTER_OUTPUT_GIT_BUILD_NAME] =
               build_name
             additional_args.push('--build-name', build_name)
@@ -204,6 +210,13 @@ module Fastlane
             optional: true,
             is_string: false,
             default_value: false,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :git_version_dirty_mark,
+            env_name: 'FL_FLUTTER_GIT_VERSION_DIRTY_MARK',
+            description: 'Append mark if the working tree is "dirty"',
+            optional: true,
+            default_value: '*',
           ),
           # l10n settings
           FastlaneCore::ConfigItem.new(

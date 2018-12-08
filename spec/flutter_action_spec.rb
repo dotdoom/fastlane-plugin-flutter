@@ -192,6 +192,7 @@ describe Fastlane::Actions::FlutterAction do
       Fastlane::Actions::FlutterAction.run(
         action: 'build',
         git_version: true,
+        git_version_dirty_mark: '*',
       )
     end
   end
