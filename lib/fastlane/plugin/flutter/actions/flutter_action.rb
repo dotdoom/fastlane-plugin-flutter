@@ -212,13 +212,7 @@ module Fastlane
                        https://github.com/flutter/flutter/issues/22788.
             DESCRIPTION
             optional: true,
-            verify_block: proc do |value|
-              begin
-                Helper::FlutterHelper.build_number(value)
-              rescue ArgumentError => e
-                UI.user_error!(e.message)
-              end
-            end,
+            verify_block: Helper::FlutterHelper.method(:build_number),
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_name_override,
@@ -234,13 +228,7 @@ module Fastlane
                        https://github.com/flutter/flutter/issues/22788.
             DESCRIPTION
             optional: true,
-            verify_block: proc do |value|
-              begin
-                Helper::FlutterHelper.build_name(value)
-              rescue ArgumentError => e
-                UI.user_error!(e.message)
-              end
-            end,
+            verify_block: Helper::FlutterHelper.method(:build_name),
           ),
           # l10n settings
           FastlaneCore::ConfigItem.new(
