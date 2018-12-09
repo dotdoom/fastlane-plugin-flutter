@@ -173,26 +173,27 @@ describe Fastlane::Actions::FlutterAction do
   end
 
   describe '#run:build' do
-    it 'gets build name and number from Git' do
-      expect(Fastlane::Actions::FlutterAction).to receive(:sh).
+    it 'gets build name and number from VCS' do
+      expect(Fastlane::Helper::FlutterHelper).to receive(:sh).
         with('git', 'rev-list', '--count', 'HEAD').
         and_return('743')
-      expect(Fastlane::Actions::FlutterAction).to receive(:sh).
+      expect(Fastlane::Helper::FlutterHelper).to receive(:sh).
         with('git', 'describe', '--tags', '--dirty=*').
         and_return('2.4.2-10-gbadf00d*')
+      # TODO(dotdoom): test further with ".and_yield".
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
         with('flutter', 'build', 'apk',
-             '--build-number', '743',
+             '--build-number', '800',
              '--build-name', '2.4.2-10-gbadf00d*')
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
         with('flutter', 'build', 'ios',
-             '--build-number', '743',
+             '--build-number', '800',
              '--build-name', '2.4.2-10-gbadf00d*')
 
       Fastlane::Actions::FlutterAction.run(
         action: 'build',
-        git_version: true,
-        git_version_dirty_mark: '*',
+        build_number_override: 'vcs+57',
+        build_name_override: 'vcs*',
       )
     end
   end

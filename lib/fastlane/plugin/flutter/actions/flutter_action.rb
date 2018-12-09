@@ -9,8 +9,9 @@ module Fastlane
     module SharedValues
       FLUTTER_OUTPUT_APP = :FLUTTER_OUTPUT_APP
       FLUTTER_OUTPUT_APK = :FLUTTER_OUTPUT_APK
-      FLUTTER_OUTPUT_GIT_BUILD_NUMBER = :FLUTTER_OUTPUT_GIT_BUILD_NUMBER
-      FLUTTER_OUTPUT_GIT_BUILD_NAME = :FLUTTER_OUTPUT_GIT_BUILD_NAME
+      FLUTTER_OUTPUT_BUILD_NUMBER_OVERRIDE =
+        :FLUTTER_OUTPUT_BUILD_NUMBER_OVERRIDE
+      FLUTTER_OUTPUT_BUILD_NAME_OVERRIDE = :FLUTTER_OUTPUT_BUILD_NAME_OVERRIDE
     end
 
     class FlutterAction < Action
@@ -38,21 +39,17 @@ module Fastlane
           additional_args = []
           additional_args.push('--debug') if params[:debug]
 
-          if params[:git_version]
-            build_number = sh(*%w(git rev-list --count HEAD)).strip.to_i
-            lane_context[SharedValues::FLUTTER_OUTPUT_GIT_BUILD_NUMBER] =
-              build_number
+          if lane_context[SharedValues::FLUTTER_OUTPUT_BUILD_NUMBER_OVERRIDE] =
+               build_number = Helper::FlutterHelper.build_number(
+                 params[:build_number_override]
+               )
             additional_args.push('--build-number', build_number.to_s)
+          end
 
-            build_name = sh(
-              *%W(
-                git describe
-                --tags
-                --dirty=#{params[:git_version_dirty_mark]}
-              )
-            ).strip
-            lane_context[SharedValues::FLUTTER_OUTPUT_GIT_BUILD_NAME] =
-              build_name
+          if lane_context[SharedValues::FLUTTER_OUTPUT_BUILD_NAME_OVERRIDE] =
+               build_name = Helper::FlutterHelper.build_name(
+                 params[:build_name_override]
+               )
             additional_args.push('--build-name', build_name)
           end
 
@@ -204,19 +201,46 @@ module Fastlane
             default_value: false,
           ),
           FastlaneCore::ConfigItem.new(
-            key: :git_version,
-            env_name: 'FL_FLUTTER_GIT_VERSION',
-            description: 'Set build number and name based on Git',
+            key: :build_number_override,
+            env_name: 'FL_FLUTTER_BUILD_NUMBER_OVERRIDE',
+            description: <<-'DESCRIPTION',
+              Override build number in pubspec.yaml. Can be either a number, or
+              a schema definition, ex.: ci (take from CI) vcs (take from Git),
+              ci+1000 (take from CI and add 1000).
+              WARNING: does not override Android build number specified in
+                       pubspec.yaml due to Flutter bug:
+                       https://github.com/flutter/flutter/issues/22788.
+            DESCRIPTION
             optional: true,
-            is_string: false,
-            default_value: false,
+            verify_block: proc do |value|
+              begin
+                Helper::FlutterHelper.build_number(value)
+              rescue ArgumentError => e
+                UI.user_error!(e.message)
+              end
+            end,
           ),
           FastlaneCore::ConfigItem.new(
-            key: :git_version_dirty_mark,
-            env_name: 'FL_FLUTTER_GIT_VERSION_DIRTY_MARK',
-            description: 'Append mark if the working tree is "dirty"',
+            key: :build_name_override,
+            env_name: 'FL_FLUTTER_BUILD_NAME_OVERRIDE',
+            description: <<-'DESCRIPTION',
+              Override build name in pubspec.yaml. Can be either a string, or a
+              schema definition, ex.: vcs* (take from VCS, add "*" for dirty
+              tree), vcs (take from VCS, no dirty mark).
+              NOTE: for App Store, must be in the format of at most 3 integeres
+                    separated by a dot (".").
+              WARNING: does not override Android build number specified in
+                       pubspec.yaml due to Flutter bug:
+                       https://github.com/flutter/flutter/issues/22788.
+            DESCRIPTION
             optional: true,
-            default_value: '*',
+            verify_block: proc do |value|
+              begin
+                Helper::FlutterHelper.build_name(value)
+              rescue ArgumentError => e
+                UI.user_error!(e.message)
+              end
+            end,
           ),
           # l10n settings
           FastlaneCore::ConfigItem.new(

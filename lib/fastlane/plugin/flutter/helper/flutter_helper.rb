@@ -57,6 +57,40 @@ module Fastlane
         end
         differencies
       end
+
+      def self.build_number(schema)
+        schema and Integer(schema)
+      rescue ArgumentError
+        build_number_source, build_number_base = schema.split('+', 2)
+
+        case build_number_source
+        when 'vcs'
+          build_number = Integer(sh(*%w(git rev-list --count HEAD)).strip)
+        when 'ci'
+          begin
+            build_number = Integer(ENV['TRAVIS_BUILD_NUMBER'] ||
+                                   ENV['CIRCLE_BUILD_NUM'])
+          rescue ArgumentError
+            raise if ENV.key?('CI')
+            raise ArgumentError, 'CI version requested, but not running on a CI'
+          end
+        end
+
+        if build_number_base
+          build_number + Integer(build_number_base)
+        else
+          build_number
+        end
+      end
+
+      def self.build_name(schema)
+        if schema && schema.start_with?('vcs')
+          dirty_mark = schema['vcs'.size..-1]
+          sh(*%W(git describe --tags --dirty=#{dirty_mark})).strip
+        else
+          schema
+        end
+      end
     end
   end
 end

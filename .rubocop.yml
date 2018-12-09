@@ -13,6 +13,8 @@ Performance/RegexpMatch:
   Enabled: false
 Performance/StringReplacement:
   Enabled: false
+Performance/FixedSize:
+  Enabled: false
 Style/NumericPredicate:
   Enabled: false
 Metrics/BlockLength:
