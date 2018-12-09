@@ -174,10 +174,10 @@ describe Fastlane::Actions::FlutterAction do
 
   describe '#run:build' do
     it 'gets build name and number from VCS' do
-      expect(Fastlane::Helper::FlutterHelper).to receive(:sh).
+      expect(Fastlane::Actions).to receive(:sh).
         with('git', 'rev-list', '--count', 'HEAD').
         and_return('743')
-      expect(Fastlane::Helper::FlutterHelper).to receive(:sh).
+      expect(Fastlane::Actions).to receive(:sh).
         with('git', 'describe', '--tags', '--dirty=*').
         and_return('2.4.2-10-gbadf00d*')
       # TODO(dotdoom): test further with ".and_yield".

@@ -65,7 +65,9 @@ module Fastlane
 
         case build_number_source
         when 'vcs'
-          build_number = Integer(sh(*%w(git rev-list --count HEAD)).strip)
+          build_number = Integer(
+            Actions.sh(*%w(git rev-list --count HEAD)).strip
+          )
         when 'ci'
           begin
             build_number = Integer(ENV['TRAVIS_BUILD_NUMBER'] ||
@@ -86,7 +88,7 @@ module Fastlane
       def self.build_name(schema)
         if schema && schema.start_with?('vcs')
           dirty_mark = schema['vcs'.size..-1]
-          sh(*%W(git describe --tags --dirty=#{dirty_mark})).strip
+          Actions.sh(*%W(git describe --tags --dirty=#{dirty_mark})).strip
         else
           schema
         end
