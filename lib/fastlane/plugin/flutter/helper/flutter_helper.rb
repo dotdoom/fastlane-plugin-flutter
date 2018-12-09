@@ -70,7 +70,7 @@ module Fastlane
           begin
             build_number = Integer(ENV['TRAVIS_BUILD_NUMBER'] ||
                                    ENV['CIRCLE_BUILD_NUM'])
-          rescue ArgumentError
+          rescue ArgumentError, TypeError
             raise if ENV.key?('CI')
             raise ArgumentError, 'CI version requested, but not running on a CI'
           end
