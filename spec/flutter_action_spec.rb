@@ -180,22 +180,37 @@ describe Fastlane::Actions::FlutterAction do
       expect(Fastlane::Actions).to receive(:sh).
         with('git', 'describe', '--tags', '--dirty=*').
         and_return('2.4.2-10-gbadf00d*')
-      # TODO(dotdoom): test further with ".and_yield".
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
         with('flutter', 'build', 'apk',
              '--build-number', '800',
-             '--build-name', '2.4.2-10-gbadf00d*')
+             '--build-name', '2.4.2-10-gbadf00d*').
+        and_yield(
+          double('AndroidBuildStatus', success?: true),
+          "Something something\nBuilt src/output.apk (32.4 MB).",
+        )
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
         with('flutter', 'build', 'ios',
              '--build-number', '800',
-             '--build-name', '2.4.2-10-gbadf00d*')
+             '--build-name', '2.4.2-10-gbadf00d*').
+        and_yield(
+          double('IOSBuildStatus', success?: true),
+          "Something something\nBuilt /Users/foo/flutter/build/output/my.app.",
+        )
 
-      Fastlane::Actions::FlutterAction.run(
+      build_outputs = Fastlane::Actions::FlutterAction.run(
         action: 'build',
         codesign: true,
         build_number_override: 'vcs+57',
         build_name_override: 'vcs*',
       )
+
+      expect(build_outputs[:ios]).to eq(Fastlane::Actions.lane_context[
+        Fastlane::Actions::SharedValues::FLUTTER_OUTPUT_APP
+      ]).and(eq('/Users/foo/flutter/build/output/my.app'))
+
+      expect(build_outputs[:android]).to eq(Fastlane::Actions.lane_context[
+        Fastlane::Actions::SharedValues::FLUTTER_OUTPUT_APK
+      ]).and(end_with('/src/output.apk'))
     end
 
     it 'allows building for iOS without codesigning' do
@@ -208,6 +223,14 @@ describe Fastlane::Actions::FlutterAction do
         action: 'build',
         codesign: false,
       )
+    end
+
+    it 'builds only for one platform if specified' do
+      expect(Fastlane::Actions::FlutterAction).to receive(:sh).
+        with('flutter', 'build', 'apk')
+      Fastlane::Actions.lane_context[
+        Fastlane::Actions::SharedValues::PLATFORM_NAME] = :android
+      Fastlane::Actions::FlutterAction.run(action: 'build')
     end
   end
 end

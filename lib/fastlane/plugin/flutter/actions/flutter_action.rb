@@ -40,12 +40,15 @@ module Fastlane
           # A map of fastlane platform name into "flutter build" args list.
           build_args = {}
 
-          (lane_context[SharedValues::PLATFORM_NAME] ||
-           # If platform is unspecified, build for all platforms.
-           PLATFORM_TO_FLUTTER.keys).each do |fastlane_platform|
-            build_args[fastlane_platform] = [
-              PLATFORM_TO_FLUTTER[fastlane_platform],
-            ]
+          if lane_context.key?(SharedValues::PLATFORM_NAME)
+            fastlane_platform = lane_context[SharedValues::PLATFORM_NAME]
+            build_args[fastlane_platform] =
+              [PLATFORM_TO_FLUTTER[fastlane_platform]]
+          else
+            # If platform is unspecified, build for all platforms.
+            PLATFORM_TO_FLUTTER.each_key do |platform|
+              build_args[platform] = [PLATFORM_TO_FLUTTER[platform]]
+            end
           end
 
           if params[:debug]
@@ -78,14 +81,11 @@ module Fastlane
 
           # Note: this statement is expected to return a value (map of platform
           # into file name).
-          build_args.map do |platform, args|
+          Hash[build_args.keys.zip(build_args.map do |platform, args|
             sh('flutter', 'build', *args) do |status, res|
               if status.success?
                 # Dirty hacks ahead!
-                if FLUTTER_TO_OUTPUT.key?(platform)
-                  # Examples:
-                  # Built /Users/foo/src/flutter/build/output/myapp.app.
-                  # Built build/output/myapp.apk (32.4MB).
+                if PLATFORM_TO_OUTPUT.key?(platform)
                   if res =~ /^Built (.*?)(:? \([^)]*\))?\.$/
                     lane_context[PLATFORM_TO_OUTPUT[platform]] =
                       File.absolute_path($1)
@@ -96,7 +96,7 @@ module Fastlane
                 UI.build_failure!("flutter build #{platform} has failed.")
               end
             end
-          end
+          end.compact)]
         when 'test'
           sh *%w(flutter test)
         when 'analyze'
