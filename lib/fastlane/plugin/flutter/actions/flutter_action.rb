@@ -22,41 +22,64 @@ module Fastlane
         android: 'apk',
       }
 
-      FLUTTER_TO_OUTPUT = {
-        'ios' => SharedValues::FLUTTER_OUTPUT_APP,
-        'apk' => SharedValues::FLUTTER_OUTPUT_APK,
+      PLATFORM_TO_OUTPUT = {
+        ios: SharedValues::FLUTTER_OUTPUT_APP,
+        android: SharedValues::FLUTTER_OUTPUT_APK,
       }
 
       def self.run(params)
+        # You can print a table of plugin configuration params like that:
+        #
+        # FastlaneCore::PrintTable.print_values(
+        #   config: params,
+        #   title: "Summary for Flutter plugin #{Fastlane::Flutter::VERSION}",
+        # )
+
         case params[:action]
         when 'build'
-          flutter_platforms = %w(apk ios)
-          # Override if we are on a specific platform (non-root lane).
-          if fastlane_platform = lane_context[SharedValues::PLATFORM_NAME]
-            flutter_platforms = [PLATFORM_TO_FLUTTER[fastlane_platform]]
+          # A map of fastlane platform name into "flutter build" args list.
+          build_args = {}
+
+          (lane_context[SharedValues::PLATFORM_NAME] ||
+           # If platform is unspecified, build for all platforms.
+           PLATFORM_TO_FLUTTER.keys).each do |fastlane_platform|
+            build_args[fastlane_platform] = [
+              PLATFORM_TO_FLUTTER[fastlane_platform],
+            ]
           end
 
-          additional_args = []
-          additional_args.push('--debug') if params[:debug]
+          if params[:debug]
+            build_args.each_value do |a|
+              a.push('--debug')
+            end
+          end
+
+          unless params[:codesign]
+            build_args[:ios].push('--no-codesign') if build_args.key?(:ios)
+          end
 
           if lane_context[SharedValues::FLUTTER_OUTPUT_BUILD_NUMBER_OVERRIDE] =
                build_number = Helper::FlutterHelper.build_number(
                  params[:build_number_override]
                )
-            additional_args.push('--build-number', build_number.to_s)
+            build_args.each_value do |a|
+              a.push('--build-number', build_number.to_s)
+            end
           end
 
           if lane_context[SharedValues::FLUTTER_OUTPUT_BUILD_NAME_OVERRIDE] =
                build_name = Helper::FlutterHelper.build_name(
                  params[:build_name_override]
                )
-            additional_args.push('--build-name', build_name)
+            build_args.each_value do |a|
+              a.push('--build-name', build_name)
+            end
           end
 
-          built_files = {}
-
-          flutter_platforms.each do |platform|
-            sh('flutter', 'build', platform, *additional_args) do |status, res|
+          # Note: this statement is expected to return a value (map of platform
+          # into file name).
+          build_args.map do |platform, args|
+            sh('flutter', 'build', *args) do |status, res|
               if status.success?
                 # Dirty hacks ahead!
                 if FLUTTER_TO_OUTPUT.key?(platform)
@@ -64,19 +87,16 @@ module Fastlane
                   # Built /Users/foo/src/flutter/build/output/myapp.app.
                   # Built build/output/myapp.apk (32.4MB).
                   if res =~ /^Built (.*?)(:? \([^)]*\))?\.$/
-                    built_file = File.absolute_path($1)
-                    built_files[PLATFORM_TO_FLUTTER.key(platform)] = built_file
-                    lane_context[FLUTTER_TO_OUTPUT[platform]] = built_file
+                    lane_context[PLATFORM_TO_OUTPUT[platform]] =
+                      File.absolute_path($1)
                   end
                 end
               else
                 # fastlane does not fail automatically if we provide a block.
-                UI.build_error!("flutter build #{platform} has failed.")
+                UI.build_failure!("flutter build #{platform} has failed.")
               end
             end
           end
-
-          built_files
         when 'test'
           sh *%w(flutter test)
         when 'analyze'
@@ -199,6 +219,15 @@ module Fastlane
             optional: true,
             is_string: false,
             default_value: false,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :codesign,
+            env_name: 'FL_FLUTTER_CODESIGN',
+            description: 'Set to false to skip iOS app signing. This may be ' \
+            'useful e.g. on CI or when signed by Fastlane "sigh"',
+            optional: true,
+            is_string: false,
+            default_value: true,
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_number_override,

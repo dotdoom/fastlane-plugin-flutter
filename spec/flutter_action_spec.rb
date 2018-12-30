@@ -192,8 +192,21 @@ describe Fastlane::Actions::FlutterAction do
 
       Fastlane::Actions::FlutterAction.run(
         action: 'build',
+        codesign: true,
         build_number_override: 'vcs+57',
         build_name_override: 'vcs*',
+      )
+    end
+
+    it 'allows building for iOS without codesigning' do
+      expect(Fastlane::Actions::FlutterAction).to receive(:sh).
+        with('flutter', 'build', 'apk')
+      expect(Fastlane::Actions::FlutterAction).to receive(:sh).
+        with('flutter', 'build', 'ios', '--no-codesign')
+
+      Fastlane::Actions::FlutterAction.run(
+        action: 'build',
+        codesign: false,
       )
     end
   end
