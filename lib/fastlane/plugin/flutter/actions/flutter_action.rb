@@ -15,7 +15,7 @@ module Fastlane
     end
 
     class FlutterAction < Action
-      FLUTTER_ACTIONS = %(build analyze test format l10n)
+      FLUTTER_ACTIONS = %w(build analyze test format l10n)
 
       PLATFORM_TO_FLUTTER = {
         ios: 'ios',
