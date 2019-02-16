@@ -11,7 +11,7 @@ describe Fastlane::Actions::FlutterAction do
   describe '#run:l10n' do
     it 'runs Dart intl generators for the first time' do
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:extract_to_arb
+        with(*%w(flutter packages pub run intl_translation:extract_to_arb
                  --output-dir=lib/l10n lib/localization.dart))
 
       expect(Dir).to receive(:glob).
@@ -19,7 +19,7 @@ describe Fastlane::Actions::FlutterAction do
         and_return(%w(lib/l10n/intl_en.arb lib/l10n/intl_messages.arb))
 
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:generate_from_arb
+        with(*%w(flutter packages pub run intl_translation:generate_from_arb
                  --output-dir=lib/l10n --no-use-deferred-loading
                  lib/localization.dart lib/l10n/intl_en.arb))
 
@@ -31,7 +31,7 @@ describe Fastlane::Actions::FlutterAction do
 
     it 'runs Dart intl generators with custom locale' do
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:extract_to_arb
+        with(*%w(flutter packages pub run intl_translation:extract_to_arb
                  --output-dir=lib/l10n --locale=en lib/localization.dart))
 
       expect(Dir).to receive(:glob).
@@ -39,7 +39,7 @@ describe Fastlane::Actions::FlutterAction do
         and_return(%w(lib/l10n/intl_de.arb lib/l10n/intl_messages.arb))
 
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:generate_from_arb
+        with(*%w(flutter packages pub run intl_translation:generate_from_arb
                  --output-dir=lib/l10n --no-use-deferred-loading
                  lib/localization.dart lib/l10n/intl_de.arb
                  lib/l10n/intl_messages.arb))
@@ -53,7 +53,7 @@ describe Fastlane::Actions::FlutterAction do
 
     it 'runs Dart intl generators and restores timestamp' do
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:extract_to_arb
+        with(*%w(flutter packages pub run intl_translation:extract_to_arb
                  --output-dir=lib/l10n lib/localization.dart))
 
       expect(File).to receive(:exist?).
@@ -80,7 +80,7 @@ describe Fastlane::Actions::FlutterAction do
         and_return(%w(lib/l10n/intl_en.arb lib/l10n/intl_messages.arb))
 
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:generate_from_arb
+        with(*%w(flutter packages pub run intl_translation:generate_from_arb
                  --output-dir=lib/l10n --no-use-deferred-loading
                  lib/localization.dart lib/l10n/intl_en.arb))
 
@@ -92,7 +92,7 @@ describe Fastlane::Actions::FlutterAction do
 
     it 'runs Dart intl generators and keeps changes' do
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:extract_to_arb
+        with(*%w(flutter packages pub run intl_translation:extract_to_arb
                  --output-dir=lib/l10n lib/localization.dart))
 
       expect(File).to receive(:exist?).
@@ -116,7 +116,7 @@ describe Fastlane::Actions::FlutterAction do
         and_return(%w(lib/l10n/intl_en.arb lib/l10n/intl_messages.arb))
 
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:generate_from_arb
+        with(*%w(flutter packages pub run intl_translation:generate_from_arb
                  --output-dir=lib/l10n --no-use-deferred-loading
                  lib/localization.dart lib/l10n/intl_en.arb))
 
@@ -128,7 +128,7 @@ describe Fastlane::Actions::FlutterAction do
 
     it 'reports errors for missing or unused translation strings' do
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:extract_to_arb
+        with(*%w(flutter packages pub run intl_translation:extract_to_arb
                  --output-dir=lib/l10n lib/localization.dart))
 
       expect(File).to receive(:exist?).
@@ -153,7 +153,7 @@ describe Fastlane::Actions::FlutterAction do
         and_return(%w(lib/l10n/intl_de.arb lib/l10n/intl_messages.arb))
 
       expect(Fastlane::Actions::FlutterAction).to receive(:sh).
-        with(*%w(flutter pub pub run intl_translation:generate_from_arb
+        with(*%w(flutter packages pub run intl_translation:generate_from_arb
                  --output-dir=lib/l10n --no-use-deferred-loading
                  lib/localization.dart lib/l10n/intl_de.arb))
 

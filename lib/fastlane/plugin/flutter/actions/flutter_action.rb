@@ -128,7 +128,7 @@ module Fastlane
           )
         end
 
-        sh *%w(flutter pub pub run intl_translation:extract_to_arb),
+        sh *%w(flutter packages pub run intl_translation:extract_to_arb),
            *extract_to_arb_options, params[:l10n_strings_file]
 
         if l10n_messages_was
@@ -175,7 +175,7 @@ module Fastlane
           end
         end
 
-        sh *%W(flutter pub pub run intl_translation:generate_from_arb
+        sh *%W(flutter packages pub run intl_translation:generate_from_arb
                --output-dir=#{output_dir}
                --no-use-deferred-loading
                #{params[:l10n_strings_file]}) + arb_files
@@ -209,7 +209,9 @@ module Fastlane
             optional: false,
             type: String,
             verify_block: proc do |value|
-              UI.user_error!("Supported actions are: #{FLUTTER_ACTIONS}") unless FLUTTER_ACTIONS.include?(value)
+              unless FLUTTER_ACTIONS.include?(value)
+                UI.user_error!("Supported actions are: #{FLUTTER_ACTIONS}")
+              end
             end,
           ),
           FastlaneCore::ConfigItem.new(
