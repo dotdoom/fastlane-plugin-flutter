@@ -15,7 +15,7 @@ module Fastlane
     end
 
     class FlutterAction < Action
-      FLUTTER_ACTIONS = %w(build analyze test format l10n)
+      FLUTTER_ACTIONS = %w(build analyze test format l10n bootstrap)
 
       PLATFORM_TO_FLUTTER = {
         ios: 'ios',
@@ -105,6 +105,8 @@ module Fastlane
           sh *%w(flutter format .)
         when 'l10n'
           run_l10n(params)
+        when 'bootstrap'
+          Helper::FlutterHelper.bootstrap_android(params[:android_licenses])
         end
       end
 
@@ -286,6 +288,16 @@ module Fastlane
             optional: true,
             is_string: false,
             default_value: true,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :android_licenses,
+            env_name: 'FL_FLUTTER_ANDROID_LICENSES',
+            description: 'Hashes of accepted Android SDK linceses, which may ' \
+            'be found in $ANDROID_SDK_ROOT/licenses',
+            optional: true,
+            is_string: false,
+            verify_block: proc { |value| value.kind_of?(Hash) },
+            default_value: {},
           ),
         ]
       end
