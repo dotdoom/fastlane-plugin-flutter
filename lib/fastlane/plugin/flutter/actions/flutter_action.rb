@@ -238,9 +238,6 @@ module Fastlane
               Override build number in pubspec.yaml. Can be either a number, or
               a schema definition, ex.: ci (take from CI) vcs (take from Git),
               ci+1000 (take from CI and add 1000).
-              WARNING: does not override Android build number specified in
-                       pubspec.yaml due to Flutter bug:
-                       https://github.com/flutter/flutter/issues/22788.
             DESCRIPTION
             optional: true,
             verify_block: Helper::FlutterHelper.method(:build_number),
@@ -254,9 +251,6 @@ module Fastlane
               tree), vcs (take from VCS, no dirty mark).
               NOTE: for App Store, must be in the format of at most 3 integeres
                     separated by a dot (".").
-              WARNING: does not override Android build number specified in
-                       pubspec.yaml due to Flutter bug:
-                       https://github.com/flutter/flutter/issues/22788.
             DESCRIPTION
             optional: true,
             verify_block: Helper::FlutterHelper.method(:build_name),
