@@ -88,9 +88,30 @@ module Fastlane
       end
 
       def self.build_name(schema)
-        if schema && schema.start_with?('vcs')
-          dirty_mark = schema['vcs'.size..-1]
-          Actions.sh(*%W(git describe --tags --dirty=#{dirty_mark})).strip
+        if schema && schema =~ /^(\^)?vcs(.*)$/
+          schema_caret = $1
+          schema_dirty_mark = $2
+          vcs_version = Actions.sh(
+            *%W(git describe --tags --dirty=#{schema_dirty_mark})
+          ).strip
+
+          # We try to match, otherwise assume vcs_version = $TAG, which means
+          # that there are 0 commits since the latest tag.
+          if schema_caret && vcs_version =~ /^
+                  (\d+[.]\d+)-
+                  (\d+)-
+                  g.*?
+                  (#{Regexp.quote(schema_dirty_mark)})?
+                $/x
+
+            vcs_version = "#{$1}.#{$2}"
+            # Making the best guess whether it's dirty.
+            if $3
+              vcs_version += schema_dirty_mark
+            end
+          end
+
+          vcs_version
         else
           schema
         end

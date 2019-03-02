@@ -250,9 +250,11 @@ module Fastlane
             description: <<-'DESCRIPTION',
               Override build name in pubspec.yaml. Can be either a string, or a
               schema definition, ex.: vcs* (take from VCS, add "*" for dirty
-              tree), vcs (take from VCS, no dirty mark).
-              NOTE: for App Store, must be in the format of at most 3 integeres
-                    separated by a dot (".").
+              tree), vcs (take from VCS, no dirty mark), ^vcs (take from the
+              latest VCS tag which must be in the form X.Y, and add the number
+              of commits since that tag as the third number, unless it's zero).
+              NOTE: for App Store, build name must be in the format of at most 3
+                    integeres separated by a dot (".").
             DESCRIPTION
             optional: true,
             verify_block: Helper::FlutterHelper.method(:build_name),
