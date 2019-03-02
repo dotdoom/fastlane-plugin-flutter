@@ -127,7 +127,7 @@ module Fastlane
           end
         end
 
-        download_android_dependencies
+        Dir.chdir('android') { Actions.sh('./gradlew', 'dependencies') }
       end
 
       def self.android_sdk_root!
@@ -135,35 +135,6 @@ module Fastlane
           unless path
             raise 'Android SDK directory environment variables are not set. ' \
               'See https://developer.android.com/studio/command-line/variables'
-          end
-        end
-      end
-
-      def self.download_android_dependencies
-        Tempfile.create('resolveDependencies.gradle') do |init_script|
-          init_script.puts(<<-GRADLE)
-          allprojects {
-              task resolveDependencies {
-                  doLast {
-                      project.configurations.each { configuration ->
-                          if (configuration.isCanBeResolved()) {
-                              configuration.resolve()
-                          }
-                      }
-                      project.buildscript.configurations.each { configuration ->
-                          if (configuration.isCanBeResolved()) {
-                              configuration.resolve()
-                          }
-                      }
-                  }
-              }
-          }
-          GRADLE
-          init_script.flush
-
-          Dir.chdir('android') do
-            Actions.sh('./gradlew', '--init-script', init_script.path,
-                       '--', ':resolveDependencies')
           end
         end
       end
