@@ -128,7 +128,7 @@ module Fastlane
           licenses.each_pair do |license, hash|
             license_file = File.join(licenses_directory, license)
             unless File.exist?(license_file) &&
-                   File.readlines(license_file).include?(hash)
+                   File.readlines(license_file).map(&:strip).include?(hash)
               File.open(license_file, 'a') { |f| f.puts('', hash) }
             end
           end
