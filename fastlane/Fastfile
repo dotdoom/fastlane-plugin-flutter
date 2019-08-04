@@ -35,7 +35,9 @@ lane :build do
   # Build a debug version of the app (release will require signing config).
   flutter_build(
     debug: true,
-    # Uncomment to build an AAB instead of an APK (requires adb, why?!).
+    # Uncomment to build an AAB instead of an APK. We don't do it here because
+    # it requires 'adb', which is normally installed but not on bare SDK.
+    # TODO(dotdoom): flutter bug: https://github.com/flutter/flutter/pull/37581.
     # build: 'appbundle',
     # Override version from pubspec.yaml.
     build_number: 123,
