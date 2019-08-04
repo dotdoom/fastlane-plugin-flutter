@@ -2,17 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      # Need Java for Android builds. Install Ruby later.
-       - image: circleci/openjdk:8
+       - image: dasfoo/dev
 
     working_directory: ~/repo
 
     steps:
       - checkout
-
-      - run:
-          name: install ruby
-          command: sudo apt update && sudo apt install ruby-dev && sudo gem install bundler
 
       # Download and cache dependencies
       - restore_cache:
