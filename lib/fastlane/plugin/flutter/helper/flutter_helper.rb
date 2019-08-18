@@ -1,3 +1,4 @@
+require 'shellwords'
 require 'yaml'
 
 module Fastlane
@@ -10,10 +11,14 @@ module Fastlane
         #                output is lost (even in case of error). Perhaps we
         #                could print the output here, via error_callback?
         # https://github.com/fastlane/fastlane/blob/b1495d134eec6681c8d7a544aa3520f1da00c80e/fastlane/lib/fastlane/helper/sh_helper.rb#L73
+        # Workaround for Fastlane not printing output if block is not given.
+        block ||= proc {}
         Actions.sh(File.join(flutter_sdk_root, 'bin', 'flutter'), *argv, &block)
       end
 
       def self.git(*argv, &block)
+        # Workaround for Fastlane not printing output if block is not given.
+        block ||= proc {}
         Actions.sh('git', *argv, &block)
       end
 
