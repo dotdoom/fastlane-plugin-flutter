@@ -70,6 +70,10 @@ module Fastlane
         'Run "flutter build" to build a Flutter application'
       end
 
+      def self.category
+        :building
+      end
+
       def self.return_value
         'A path to the built file, if available'
       end
