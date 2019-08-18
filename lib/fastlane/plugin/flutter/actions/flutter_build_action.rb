@@ -58,10 +58,9 @@ module Fastlane
             else
               UI.important('Cannot parse built file path from "flutter build"')
             end
-          else
-            # fastlane does not fail automatically if we provide a block.
-            UI.build_failure!('"flutter build" has failed')
           end
+          # Tell upstream to NOT ignore error.
+          false
         end
 
         lane_context[SharedValues::FLUTTER_OUTPUT]

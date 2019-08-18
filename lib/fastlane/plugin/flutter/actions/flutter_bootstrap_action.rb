@@ -23,23 +23,21 @@ module Fastlane
           UI.message("Upgrading Flutter SDK in #{flutter_sdk_root}...")
           if flutter_channel
             UI.message("Making sure Flutter is on channel #{flutter_channel}")
-            Helper::FlutterHelper.flutter(
-              'channel', flutter_channel,
-              log: false
-            )
+            Helper::FlutterHelper.flutter('channel', flutter_channel) {}
           end
-          Helper::FlutterHelper.flutter('upgrade', log: false)
+          Helper::FlutterHelper.flutter('upgrade') {}
         else
           Helper::FlutterHelper.git(
             'clone', # no --depth to keep Flutter tag-based versioning.
             "--branch=#{flutter_channel || 'beta'}",
+            '--quiet',
             '--',
             'https://github.com/flutter/flutter.git',
             flutter_sdk_root,
           )
         end
         UI.message('Precaching Flutter SDK binaries...')
-        Helper::FlutterHelper.flutter('precache', log: false)
+        Helper::FlutterHelper.flutter('precache') {}
       end
 
       def self.android_sdk_root!

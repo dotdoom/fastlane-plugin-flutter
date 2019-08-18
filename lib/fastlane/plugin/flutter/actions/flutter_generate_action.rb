@@ -10,7 +10,7 @@ module Fastlane
       extend FlutterActionBase
 
       def self.run(params)
-        Helper::FlutterHelper.flutter(*%w(packages get), log: false)
+        Helper::FlutterHelper.flutter(*%w(packages get)) {}
 
         # In an ideal world, this should be a part of build_runner:
         # https://github.com/dart-lang/intl_translation/issues/32

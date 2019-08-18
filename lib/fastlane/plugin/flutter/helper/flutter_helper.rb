@@ -5,21 +5,11 @@ module Fastlane
   module Helper
     class FlutterHelper
       def self.flutter(*argv, &block)
-        # TODO(dotdoom): use CommandExecutor instead of Actions.sh.
-        # TODO(dotdoom): explain special keys in params, like "log" etc.
-        # TODO(dotdoom): most commands set "log: false", which means that the
-        #                output is lost (even in case of error). Perhaps we
-        #                could print the output here, via error_callback?
-        # https://github.com/fastlane/fastlane/blob/b1495d134eec6681c8d7a544aa3520f1da00c80e/fastlane/lib/fastlane/helper/sh_helper.rb#L73
-        # Workaround for Fastlane not printing output if block is not given.
-        block ||= proc {}
-        Actions.sh(File.join(flutter_sdk_root, 'bin', 'flutter'), *argv, &block)
+        execute(File.join(flutter_sdk_root, 'bin', 'flutter'), *argv, &block)
       end
 
       def self.git(*argv, &block)
-        # Workaround for Fastlane not printing output if block is not given.
-        block ||= proc {}
-        Actions.sh('git', *argv, &block)
+        execute('git', *argv, &block)
       end
 
       def self.flutter_sdk_root
@@ -36,6 +26,36 @@ module Fastlane
 
       def self.dev_dependency?(package)
         (YAML.load_file('pubspec.yaml')['dev_dependencies'] || {}).key?(package)
+      end
+
+      def self.execute(*command)
+        # TODO(dotdoom): make CommandExecutor (and Actions.sh) behave similarly.
+        command = command.shelljoin
+        UI.command(command)
+        Open3.popen3(command) do |stdin, stdout, stderr, wait_thread|
+          errors_thread = Thread.new { stderr.read }
+          stdin.close
+
+          if block_given?
+            output = stdout.read
+            ignore_error = yield(wait_thread.value, output, errors_thread)
+          else
+            stdout.each_line do |stdout_line|
+              UI.command_output(stdout_line.chomp)
+            end
+          end
+
+          unless wait_thread.value.success? || (ignore_error == true)
+            UI.shell_error!(<<-ERROR)
+The following command has failed:
+
+$ #{command}
+[#{wait_thread.value}]
+
+#{errors_thread.value}
+ERROR
+          end
+        end
       end
     end
   end
