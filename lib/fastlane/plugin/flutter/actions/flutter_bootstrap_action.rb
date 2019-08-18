@@ -23,9 +23,7 @@ module Fastlane
           UI.message("Upgrading Flutter SDK in #{flutter_sdk_root}...")
           if flutter_channel
             UI.message("Making sure Flutter is on channel #{flutter_channel}")
-            Helper::FlutterHelper.flutter(
-              'channel', flutter_channel, log: false
-            )
+            Helper::FlutterHelper.flutter('channel', flutter_channel)
           end
           Helper::FlutterHelper.flutter('upgrade', log: false)
         else

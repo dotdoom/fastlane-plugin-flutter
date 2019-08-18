@@ -4,6 +4,7 @@ module Fastlane
   module Helper
     class FlutterHelper
       def self.flutter(*argv, &block)
+        # TODO(dotdoom): use CommandExecutor instead of Actions.sh.
         # TODO(dotdoom): explain special keys in params, like "log" etc.
         # TODO(dotdoom): most commands set "log: false", which means that the
         #                output is lost (even in case of error). Perhaps we
