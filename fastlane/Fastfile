@@ -6,9 +6,12 @@ desc "installed by Gradle automatically during the first build."
 desc "Nevertheless, ANDROID_SDK_ROOT or ANDROID_HOME environment variable must"
 desc "point to a destination directory (which might be empty)."
 lane :bootstrap do
-  flutter_bootstrap(android_licenses: {
-    'android-sdk-license' => '24333f8a63b6825ea9c5514f83c2829b004d1fee',
-  })
+  flutter_bootstrap(
+    android_licenses: {
+      'android-sdk-license' => '24333f8a63b6825ea9c5514f83c2829b004d1fee',
+    },
+    flutter_channel: 'beta',
+  )
 end
 
 desc "Generate files, format, lint and build project."
