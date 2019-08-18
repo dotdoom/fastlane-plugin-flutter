@@ -1,5 +1,6 @@
 # flutter plugin
 
+[![CircleCI](https://circleci.com/gh/dotdoom/fastlane-plugin-flutter.svg?style=svg)](https://circleci.com/gh/dotdoom/fastlane-plugin-flutter)
 [![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-flutter)
 
 ## Getting Started
