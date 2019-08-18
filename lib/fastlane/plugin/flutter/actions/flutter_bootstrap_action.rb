@@ -20,12 +20,14 @@ module Fastlane
         flutter_sdk_root = Helper::FlutterHelper.flutter_sdk_root
         flutter_channel = params[:flutter_channel]
         if File.directory?(flutter_sdk_root)
-          UI.message("Upgrading Flutter SDK in #{flutter_sdk_root}...")
           if flutter_channel
             UI.message("Making sure Flutter is on channel #{flutter_channel}")
             Helper::FlutterHelper.flutter('channel', flutter_channel) {}
           end
-          Helper::FlutterHelper.flutter('upgrade') {}
+          if params[:flutter_auto_upgrade]
+            UI.message("Upgrading Flutter SDK in #{flutter_sdk_root}...")
+            Helper::FlutterHelper.flutter('upgrade') {}
+          end
         else
           Helper::FlutterHelper.git(
             'clone', # no --depth to keep Flutter tag-based versioning.
@@ -62,6 +64,14 @@ module Fastlane
             description: 'Flutter SDK channel (keep existing if unset)',
             optional: true,
             type: String,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :flutter_auto_upgrade,
+            env_name: 'FL_FLUTTER_AUTO_UPGRADE',
+            description: 'Automatically upgrade Flutter when already installed',
+            default_value: true,
+            optional: true,
+            is_string: false, # official replacement for "type: Boolean"
           ),
           FastlaneCore::ConfigItem.new(
             key: :android_licenses,
