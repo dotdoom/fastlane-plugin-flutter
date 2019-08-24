@@ -25,7 +25,8 @@ module Fastlane
       end
 
       def self.flutter_installed?
-        File.executable?(flutter_binary)
+        # Can't use File.executable? because on Windows it has to be .exe.
+        File.exist?(flutter_binary)
       end
 
       def self.flutter_binary
