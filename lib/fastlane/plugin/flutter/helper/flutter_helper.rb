@@ -63,6 +63,8 @@ $ #{command}
 #{errors_thread.value}
 ERROR
           end
+
+          ignore_error
         end
       end
     end

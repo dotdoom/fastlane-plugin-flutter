@@ -8,6 +8,8 @@ module Fastlane
     class FlutterBootstrapAction < Action
       extend FlutterActionBase
 
+      FLUTTER_REMOTE_REPOSITORY = 'https://github.com/flutter/flutter.git'
+
       def self.run(params)
         if params[:android_licenses]
           Helper::FlutterBootstrapHelper.accept_licenses(
@@ -24,7 +26,8 @@ module Fastlane
             UI.message("Making sure Flutter is on channel #{flutter_channel}")
             Helper::FlutterHelper.flutter('channel', flutter_channel) {}
           end
-          if params[:flutter_auto_upgrade]
+          if params[:flutter_auto_upgrade] &&
+             need_upgrade_to_channel?(flutter_sdk_root, flutter_channel)
             UI.message("Upgrading Flutter SDK in #{flutter_sdk_root}...")
             Helper::FlutterHelper.flutter('upgrade') {}
           end
@@ -34,12 +37,40 @@ module Fastlane
             "--branch=#{flutter_channel || 'beta'}",
             '--quiet',
             '--',
-            'https://github.com/flutter/flutter.git',
+            FLUTTER_REMOTE_REPOSITORY,
             flutter_sdk_root,
           )
         end
+
         UI.message('Precaching Flutter SDK binaries...')
         Helper::FlutterHelper.flutter('precache') {}
+      end
+
+      def self.need_upgrade_to_channel?(flutter_sdk_root, flutter_channel)
+        # No channel specified -- always upgrade.
+        return true unless flutter_channel
+
+        remote_hash = Helper::FlutterHelper.git(
+          'ls-remote', FLUTTER_REMOTE_REPOSITORY, flutter_channel
+        ) do |status, output, errors_thread|
+          output.split[0].strip if status.success?
+        end
+        local_hash = Helper::FlutterHelper.git(
+          '-C', flutter_sdk_root, 'rev-parse', 'HEAD'
+        ) do |status, output, errors_thread|
+          output.strip if status.success?
+        end
+
+        if local_hash != nil && local_hash == remote_hash
+          UI.message("Local and remote Flutter repository hashes match " \
+                     "(#{local_hash}), no upgrade necessary. Keeping Git " \
+                     "index untouched!")
+          false
+        else
+          UI.message("Local hash (#{local_hash}) of Flutter repository " \
+                     "differs from remote (#{remote_hash}), upgrading")
+          true
+        end
       end
 
       def self.android_sdk_root!
