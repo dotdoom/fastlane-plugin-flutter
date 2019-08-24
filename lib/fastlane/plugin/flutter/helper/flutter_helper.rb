@@ -5,7 +5,7 @@ module Fastlane
   module Helper
     class FlutterHelper
       def self.flutter(*argv, &block)
-        execute(File.join(flutter_sdk_root, 'bin', 'flutter'), *argv, &block)
+        execute(flutter_binary, *argv, &block)
       end
 
       def self.git(*argv, &block)
@@ -22,6 +22,14 @@ module Fastlane
             'vendor/flutter'
           end
         )
+      end
+
+      def self.flutter_installed?
+        File.executable?(flutter_binary)
+      end
+
+      def self.flutter_binary
+        File.join(flutter_sdk_root, 'bin', 'flutter')
       end
 
       def self.dev_dependency?(package)

@@ -19,7 +19,7 @@ module Fastlane
         # Upgrade or install Flutter SDK.
         flutter_sdk_root = Helper::FlutterHelper.flutter_sdk_root
         flutter_channel = params[:flutter_channel]
-        if File.directory?(flutter_sdk_root)
+        if Helper::FlutterHelper.flutter_installed?
           if flutter_channel
             UI.message("Making sure Flutter is on channel #{flutter_channel}")
             Helper::FlutterHelper.flutter('channel', flutter_channel) {}
@@ -30,7 +30,7 @@ module Fastlane
           end
         else
           Helper::FlutterHelper.git(
-            'clone', # no --depth to keep Flutter tag-based versioning.
+            'clone', # no --depth limit to keep Flutter tag-based versioning.
             "--branch=#{flutter_channel || 'beta'}",
             '--quiet',
             '--',
