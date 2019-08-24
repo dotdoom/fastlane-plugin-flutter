@@ -61,7 +61,7 @@ module Fastlane
           output.strip if status.success?
         end
 
-        if local_hash != nil && local_hash == remote_hash
+        if !local_hash.nil? && local_hash == remote_hash
           UI.message("Local and remote Flutter repository hashes match " \
                      "(#{local_hash}), no upgrade necessary. Keeping Git " \
                      "index untouched!")
