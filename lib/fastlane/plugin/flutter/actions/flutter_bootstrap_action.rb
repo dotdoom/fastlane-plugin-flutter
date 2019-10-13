@@ -41,9 +41,6 @@ module Fastlane
             flutter_sdk_root,
           )
         end
-
-        UI.message('Precaching Flutter SDK binaries...')
-        Helper::FlutterHelper.flutter('precache') {}
       end
 
       def self.need_upgrade_to_channel?(flutter_sdk_root, flutter_channel)
