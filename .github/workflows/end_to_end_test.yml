@@ -1,0 +1,24 @@
+name: end-to-end test
+
+on: [push]
+
+jobs:
+  end-to-end-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        runson: [macOS-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.runson }}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.5
+      # Have to split multiple commands into steps due to a bug on Windows:
+      # https://github.community/t5/GitHub-Actions/Windows-multi-line-step-run/td-p/30428
+      - run: gem install --no-doc bundler
+      - run: bundle install
+      - run: bundle exec rake
+      # For Windows: error: unable to create file <...>: Filename too long
+      - run: git config --global core.longpaths true
+      - run: bundle exec fastlane end_to_end_test

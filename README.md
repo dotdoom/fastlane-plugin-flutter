@@ -1,7 +1,7 @@
 # flutter plugin
 
 [![Gem Version](https://badge.fury.io/rb/fastlane-plugin-flutter.svg)](https://badge.fury.io/rb/fastlane-plugin-flutter)
-[![CircleCI](https://circleci.com/gh/dotdoom/fastlane-plugin-flutter.svg?style=shield)](https://circleci.com/gh/dotdoom/fastlane-plugin-flutter)
+[![Build Status](https://github.com/dotdoom/fastlane-plugin-flutter/workflows/end-to-end%20test/badge.svg)](https://github.com/dotdoom/fastlane-plugin-flutter/actions?workflow=end-to-end+test)
 [![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-flutter)
 
 ## Getting Started
