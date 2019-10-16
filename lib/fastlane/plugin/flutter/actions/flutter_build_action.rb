@@ -50,6 +50,8 @@ module Fastlane
           build_args.push('--build-name', build_name.to_s)
         end
 
+        build_args += params[:build_args] || []
+
         Helper::FlutterHelper.flutter('build', *build_args) do |status, res|
           if status.success?
             if res =~ /^Built (.*?)(:? \([^)]*\))?\.$/
@@ -119,6 +121,12 @@ module Fastlane
                     integeres separated by a dot (".").
             DESCRIPTION
             optional: true,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :build_args,
+            description: 'An array of extra arguments for "flutter build"',
+            optional: true,
+            type: Array,
           ),
         ]
       end
