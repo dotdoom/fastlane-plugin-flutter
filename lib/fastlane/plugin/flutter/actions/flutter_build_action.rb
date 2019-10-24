@@ -60,6 +60,10 @@ module Fastlane
             else
               UI.important('Cannot parse built file path from "flutter build"')
             end
+          else
+            # Print stdout from "flutter build" because it may contain useful
+            # details about failures, and it's normally not very verbose.
+            UI.command_output(res)
           end
           # Tell upstream to NOT ignore error.
           false
