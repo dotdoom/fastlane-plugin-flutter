@@ -19,7 +19,7 @@ module Fastlane
           elsif flutter_binary = FastlaneCore::CommandExecutor.which('flutter')
             File.dirname(File.dirname(flutter_binary))
           else
-            'vendor/flutter'
+            File.join(Dir.pwd, 'vendor', 'flutter')
           end
         )
       end

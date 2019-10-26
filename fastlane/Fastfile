@@ -67,7 +67,6 @@ lane :end_to_end_test do
     # this test, we want to really test full installation procedure.
     ENV.delete('ANDROID_HOME')
     ENV['ANDROID_SDK_ROOT'] = File.join(root, 'android')
-    ENV['FLUTTER_SDK_ROOT'] = File.join(root, 'flutter')
 
     # Install our dependencies to this temporary directory.
     bootstrap
