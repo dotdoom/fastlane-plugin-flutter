@@ -33,7 +33,7 @@ lane :build do
   # ensure_git_status_clean
 
   # Lint (statically find errors).
-  flutter(args: %w(analyze lib))
+  flutter(args: %w(analyze))
 
   # Build a debug version of the app (release will require signing config).
   apk = flutter_build(
