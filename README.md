@@ -1,8 +1,16 @@
 # flutter plugin
 
 [![Gem Version](https://badge.fury.io/rb/fastlane-plugin-flutter.svg)](https://badge.fury.io/rb/fastlane-plugin-flutter)
-[![Build Status](https://github.com/dotdoom/fastlane-plugin-flutter/workflows/end-to-end%20test/badge.svg)](https://github.com/dotdoom/fastlane-plugin-flutter/actions?workflow=end-to-end+test)
 [![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-flutter)
+[![Build Status](https://github.com/dotdoom/fastlane-plugin-flutter/workflows/end-to-end%20test/badge.svg)](https://github.com/dotdoom/fastlane-plugin-flutter/actions?workflow=end-to-end+test)
+
+Automated end-to-end test (download Flutter, create an app, build it) on the
+following platforms:
+
+* macOS (iOS)
+* macOS (Android)
+* Ubuntu Linux (Android)
+* Windows (Android)
 
 ## Getting Started
 
