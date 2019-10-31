@@ -7,8 +7,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macOS-latest, ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
+        os: [macOS-latest, ubuntu-latest, windows-latest]
+        platform: [ios, android]
+        exclude:
+        # Can't build for iOS on Ubuntu and Windows.
+        - os: ubuntu-latest
+          platform: ios
+        - os: windows-latest
+          platform: ios
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-ruby@v1
@@ -21,4 +28,4 @@ jobs:
       - run: bundle exec rake
       # For Windows: error: unable to create file <...>: Filename too long
       - run: git config --global core.longpaths true
-      - run: bundle exec fastlane end_to_end_test
+      - run: bundle exec fastlane ${{ matrix.platform }} end_to_end_test

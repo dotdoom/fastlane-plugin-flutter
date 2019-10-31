@@ -1,17 +1,29 @@
 default_platform(:android)
 
-desc "Useful on CI, this lane installs Flutter and accepts some of the Android"
-desc "SDK licenses. Note that it does not install Android SDK itself, which is"
-desc "installed by Gradle automatically during the first build."
-desc "Nevertheless, ANDROID_SDK_ROOT or ANDROID_HOME environment variable must"
-desc "point to a destination directory (which might be empty)."
-lane :bootstrap do
-  flutter_bootstrap(
-    android_licenses: {
-      'android-sdk-license' => '24333f8a63b6825ea9c5514f83c2829b004d1fee',
-    },
-    flutter_channel: 'beta',
-  )
+platform :ios do
+  desc "Useful on CI, this lane installs Flutter."
+  lane :bootstrap do
+    flutter_bootstrap(flutter_channel: 'beta')
+  end
+end
+
+platform :android do
+  desc "Useful on CI, this lane installs Flutter and accepts some of the"
+  desc "Android SDK licenses. Note that it does not install Android SDK itself,"
+  desc "which is installed by Gradle automatically during the first build."
+  desc "Nevertheless, ANDROID_SDK_ROOT or ANDROID_HOME environment variable"
+  desc "must point to a destination directory (which might be empty)."
+  lane :bootstrap do
+    # Only do this when building for Android, otherwise we would enforce
+    # existence of ANDROID_SDK_ROOT environment variable, which is completely
+    # unnecessary when building for iOS.
+    flutter_bootstrap(
+      flutter_channel: 'beta',
+      android_licenses: {
+        'android-sdk-license' => '24333f8a63b6825ea9c5514f83c2829b004d1fee',
+      },
+    )
+  end
 end
 
 desc "Generate files, format, lint and build project."
@@ -35,30 +47,50 @@ lane :build do
   # Lint (statically find errors).
   flutter(args: %w(analyze))
 
+  build_args = []
+  if lane_context[SharedValues::PLATFORM_NAME] == :android
+    build_args << '--shrink'
+  elsif lane_context[SharedValues::PLATFORM_NAME] == :ios
+    build_args << '--no-codesign'
+  end
+
   # Build a debug version of the app (release will require signing config).
-  apk = flutter_build(
+  output_file = flutter_build(
     debug: true,
-    # Uncomment to build an AAB instead of an APK. We don't do it here because
-    # it requires 'adb', which is normally installed but not on bare SDK.
-    # TODO(dotdoom): flutter bug: https://github.com/flutter/flutter/pull/37581.
+    # Uncomment to build a specific binary (apk, appbundle, ios etc). When
+    # unspecified, the plugin will use Fastlane platform specific default.
     # build: 'appbundle',
     # Override version from pubspec.yaml.
     build_number: 123,
     build_name: '1.2.3',
     # Demo of custom build arguments appended to "flutter build" command line.
-    build_args: ['--shrink'],
+    build_args: build_args,
   )
 
-  UI.success("Built #{File.size(apk)} bytes of APK!")
+  UI.success("Built #{output_file}!")
 end
 
 ######## Internal tests for the plugin ########
+
+# TODO(dotdoom): find a way of launching platform-agnostic lane with a platform:
+#                $ bundle exec fastlane ios end_to_end_test
+#                without resorting to creating multiple lanes.
+platform :ios do
+  lane :end_to_end_test do
+    platform_agnostic_end_to_end_test
+  end
+end
+platform :android do
+  lane :end_to_end_test do
+    platform_agnostic_end_to_end_test
+  end
+end
 
 desc "This is an internal test for Fastlane Flutter plugin. You shouldn't"
 desc "need to do anything like that in your Fastfile."
 desc "It uses 'bootstrap' lane from above to install Flutter, then creates a"
 desc "temporary (but real) Flutter project, and builds it via 'build' lane."
-lane :end_to_end_test do
+lane :platform_agnostic_end_to_end_test do
   # The block version doesn't work on Windows for some reason:
   # `rmdir': [!] Directory not empty @ dir_s_rmdir
   root = Dir.mktmpdir('fastlane-plugin-flutter-')
