@@ -14,11 +14,11 @@ platform :android do
   desc "Nevertheless, ANDROID_SDK_ROOT or ANDROID_HOME environment variable"
   desc "must point to a destination directory (which might be empty)."
   lane :bootstrap do
-    # Only do this when building for Android, otherwise we would enforce
-    # existence of ANDROID_SDK_ROOT environment variable, which is completely
-    # unnecessary when building for iOS.
     flutter_bootstrap(
       flutter_channel: 'beta',
+      # Only do this when building for Android, otherwise we would enforce
+      # existence of ANDROID_SDK_ROOT environment variable, which is completely
+      # unnecessary when building for iOS.
       android_licenses: {
         'android-sdk-license' => '24333f8a63b6825ea9c5514f83c2829b004d1fee',
       },
