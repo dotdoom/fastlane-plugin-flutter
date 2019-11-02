@@ -32,12 +32,10 @@ module Fastlane
           end
         end
 
+        process_deprecated_params(params, build_args)
+
         if params[:debug]
           build_args.push('--debug')
-        end
-
-        if params[:codesign] == false
-          build_args.push('--no-codesign')
         end
 
         if build_number = (params[:build_number] ||
@@ -70,6 +68,24 @@ module Fastlane
         end
 
         lane_context[SharedValues::FLUTTER_OUTPUT]
+      end
+
+      def self.process_deprecated_params(params, build_args)
+        unless params[:codesign].nil?
+          UI.deprecated(<<-"MESSAGE")
+flutter_build parameter "codesign" is deprecated. Use
+
+  flutter_build(
+    build_args: ["--#{params[:codesign] == false ? 'no-' : ''}codesign"]
+  )
+
+form instead.
+          MESSAGE
+
+          if params[:codesign] == false
+            build_args.push('--no-codesign')
+          end
+        end
       end
 
       def self.description
