@@ -58,6 +58,10 @@ module Fastlane
             else
               UI.important('Cannot parse built file path from "flutter build"')
             end
+            # gym (aka build_ios_app) action call may follow build; let's help
+            # it identify the project, since Flutter project structure is
+            # usually standard.
+            publish_gym_defaults(build_args)
           else
             # Print stdout from "flutter build" because it may contain useful
             # details about failures, and it's normally not very verbose.
@@ -68,6 +72,23 @@ module Fastlane
         end
 
         lane_context[SharedValues::FLUTTER_OUTPUT]
+      end
+
+      def self.publish_gym_defaults(build_args)
+        ENV['GYM_WORKSPACE'] ||= 'ios/Runner.xcworkspace'
+        ENV['GYM_BUILD_PATH'] ||= 'build/ios'
+        unless ENV.include?('GYM_SCHEME')
+          # Do some parsing on args. Is there a less ugly way?
+          build_args.each.with_index do |arg, index|
+            if arg.start_with?('--flavor', '-flavor')
+              if arg.include?('=')
+                ENV['GYM_SCHEME'] = arg.split('=', 2).last
+              else
+                ENV['GYM_SCHEME'] = build_args[index + 1]
+              end
+            end
+          end
+        end
       end
 
       def self.process_deprecated_params(params, build_args)
