@@ -33,9 +33,11 @@ module Fastlane
       end
 
       def self.description
-        # Not splitting the line because of documentation generator bug:
-        # https://github.com/fastlane/fastlane/issues/15199
-        'According to package:intl, take $strings_file and generate ${strings_file.dirname}/arb/intl_messages.arb, then take all files matching ${strings_file.dirname}/intl_*.arb, fix them and generate .dart files from them'
+        "1. Run `build_runner build` if build_runner is in dev_dependencies\n" \
+        "2. According to `package:intl`, take `$strings_file` and generate " \
+        "`${strings_file.dirname}/arb/intl_messages.arb`, then take all " \
+        "files matching `${strings_file.dirname}/intl_*.arb`, fix them and " \
+        "generate .dart files from them"
       end
 
       def self.available_options
