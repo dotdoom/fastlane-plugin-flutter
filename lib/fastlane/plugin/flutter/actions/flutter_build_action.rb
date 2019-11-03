@@ -77,6 +77,7 @@ module Fastlane
       def self.publish_gym_defaults(build_args)
         ENV['GYM_WORKSPACE'] ||= 'ios/Runner.xcworkspace'
         ENV['GYM_BUILD_PATH'] ||= 'build/ios'
+        ENV['GYM_OUTPUT_DIRECTORY'] ||= 'build'
         unless ENV.include?('GYM_SCHEME')
           # Do some parsing on args. Is there a less ugly way?
           build_args.each.with_index do |arg, index|
