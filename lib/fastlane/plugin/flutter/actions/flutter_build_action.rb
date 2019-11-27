@@ -52,7 +52,7 @@ module Fastlane
 
         Helper::FlutterHelper.flutter('build', *build_args) do |status, res|
           if status.success?
-            if res =~ /^Built (.*?)(:? \([^)]*\))?\.$/
+            if res =~ /Built (.*?)(:? \([^)]*\))?\.$/
               lane_context[SharedValues::FLUTTER_OUTPUT] =
                 File.absolute_path($1)
             else
