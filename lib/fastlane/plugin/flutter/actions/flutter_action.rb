@@ -8,7 +8,11 @@ module Fastlane
       extend FlutterActionBase
 
       def self.run(params)
-        Helper::FlutterHelper.flutter(*params[:args])
+        if params[:capture_stdout]
+          Helper::FlutterHelper.flutter(*params[:args]) {}
+        else
+          Helper::FlutterHelper.flutter(*params[:args])
+        end
       end
 
       def self.description
@@ -22,6 +26,14 @@ module Fastlane
             env_name: 'FL_FLUTTER_ARGS',
             description: 'Arguments to Flutter command',
             type: Array,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :capture_stdout,
+            env_name: 'FL_FLUTTER_CAPTURE_STDOUT',
+            description: 'Do not print stdout of the command, but return it',
+            optional: true,
+            type: Boolean,
+            default_value: false,
           ),
         ]
       end
