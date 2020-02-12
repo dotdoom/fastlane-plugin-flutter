@@ -67,6 +67,22 @@ lane :build do
     build_args: build_args,
   )
 
+  # NOTE: for iOS, output_file will point to a .app directory instead of an
+  # .ipa file: see https://github.com/flutter/flutter/issues/13065.
+  #
+  # flutter_build action helps you by setting up GYM_xxx environment variables
+  # so that you can use gym() without parameters immediately afterwards:
+  #
+  #   gym(silent: true, suppress_xcode_output: true)
+  #
+  # We do not run gym() here because it requires a provisioning profile, which
+  # is not installed on the test server.
+  #
+  # Once gym() completes, it sets SharedValues::IPA_OUTPUT_PATH context variable
+  # which is then automatically detected by upload_to_testflight or
+  # upload_to_app_store actions, so those do not need to be configured any
+  # further.
+
   UI.success("Built #{output_file}!")
 end
 
