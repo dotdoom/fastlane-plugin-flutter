@@ -9,7 +9,9 @@ module Fastlane
 
       def self.run(params)
         if params[:capture_stdout]
-          Helper::FlutterHelper.flutter(*params[:args]) {}
+          Helper::FlutterHelper.flutter(*params[:args]) do |status, output|
+            output
+          end
         else
           Helper::FlutterHelper.flutter(*params[:args])
         end
