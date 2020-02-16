@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Fill in some well-known context variables in `flutter_build()` action.
+* Slightly expand on `flutter_generate()` command.
 
 ## 0.3.18
 
