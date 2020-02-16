@@ -33,11 +33,13 @@ module Fastlane
       end
 
       def self.description
-        "1. Run `build_runner build` if build_runner is in dev_dependencies\n" \
-        "2. According to `package:intl`, take `$strings_file` and generate " \
+        "(1) Run `flutter packages get`;  " \
+        "(2) Run `build_runner build` if build_runner is in dev_dependencies;" \
+        "   " \
+        "(3) According to `package:intl`, take `$strings_file` and generate " \
         "`${strings_file.dirname}/arb/intl_messages.arb`, then take all " \
         "files matching `${strings_file.dirname}/intl_*.arb`, fix them and " \
-        "generate .dart files from them"
+        "generate .dart files from them."
       end
 
       def self.available_options

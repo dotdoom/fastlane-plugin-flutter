@@ -71,6 +71,17 @@ module Fastlane
           false
         end
 
+        # Fill in some well-known context variables so that next commands may
+        # pick them up.
+        case params[:build]
+        when 'apk'
+          lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH] =
+            lane_context[SharedValues::FLUTTER_OUTPUT]
+        when 'appbundle'
+          lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH] =
+            lane_context[SharedValues::FLUTTER_OUTPUT]
+        end
+
         lane_context[SharedValues::FLUTTER_OUTPUT]
       end
 
