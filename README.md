@@ -2,6 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/fastlane-plugin-flutter.svg)](https://badge.fury.io/rb/fastlane-plugin-flutter)
 [![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-flutter)
+[![codecov](https://codecov.io/gh/dotdoom/fastlane-plugin-flutter/branch/master/graph/badge.svg)](https://codecov.io/gh/dotdoom/fastlane-plugin-flutter)
 [![Build Status](https://github.com/dotdoom/fastlane-plugin-flutter/workflows/end-to-end%20test/badge.svg?branch=master)](https://github.com/dotdoom/fastlane-plugin-flutter/actions?query=workflow%3A"end-to-end+test"+branch%3Amaster)
 
 Automated end-to-end test (download Flutter, create an app, build it) on the
