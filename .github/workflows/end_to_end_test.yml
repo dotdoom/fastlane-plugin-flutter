@@ -10,11 +10,11 @@ jobs:
         os: [macOS-latest, ubuntu-latest, windows-latest]
         platform: [ios, android]
         exclude:
-        # Can't build for iOS on Ubuntu and Windows.
-        - os: ubuntu-latest
-          platform: ios
-        - os: windows-latest
-          platform: ios
+          # Can't build for iOS on Ubuntu and Windows.
+          - os: ubuntu-latest
+            platform: ios
+          - os: windows-latest
+            platform: ios
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
@@ -26,6 +26,11 @@ jobs:
       - run: gem install --no-doc bundler
       - run: bundle install
       - run: bundle exec rake
+      - name: 'Run-run rake with coverage upload'
+        if: runner.os == 'Linux' && matrix.platform == 'android'
+        run: bundle exec rake
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       # For Windows: error: unable to create file <...>: Filename too long
       - run: git config --global core.longpaths true
       - run: bundle exec fastlane ${{ matrix.platform }} end_to_end_test

@@ -1,3 +1,8 @@
+## 0.4.0
+
+* Support `--split-per-abi` flag and return a list from `flutter_build()` in
+  that case.
+
 ## 0.3.19
 
 * Fill in some well-known context variables in `flutter_build()` action.

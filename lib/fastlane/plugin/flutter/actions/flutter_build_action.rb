@@ -52,9 +52,13 @@ module Fastlane
 
         Helper::FlutterHelper.flutter('build', *build_args) do |status, res|
           if status.success?
-            if res =~ /Built (.*?)(:? \([^)]*\))?\.$/
-              lane_context[SharedValues::FLUTTER_OUTPUT] =
-                File.absolute_path($1)
+            artifacts = res.scan(/Built (.*?)(:? \([^)]*\))?\.$/).
+                        map { |path| File.absolute_path(path[0]) }
+            if artifacts.size == 1
+              lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts.first
+            elsif artifacts.size > 1
+              # Could be the result of "flutter build apk --split-per-abi".
+              lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts
             else
               UI.important('Cannot parse built file path from "flutter build"')
             end
