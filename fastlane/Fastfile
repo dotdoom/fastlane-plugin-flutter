@@ -34,6 +34,9 @@ lane :build do
     intl_strings_file: 'lib/strings.dart',
     # Actual locale of default values provided in that Dart file.
     intl_strings_locale: 'en_US',
+    # Generate a file in test/ directory which imports all .dart files in the
+    # project. This helps coverage tools account for files with zero coverage.
+    coverage_all_imports: true,
   )
 
   # Reformat the source code.

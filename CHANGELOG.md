@@ -1,3 +1,10 @@
+## Unreleased
+
+* Add `coverage_all_imports: true` support to `flutter_generate()`, which would
+  generate a test importing all `.dart` files in `lib/`. This will make coverage
+  tools consider percentage of overall project rather than files with non-zero
+  coverage only.
+
 ## 0.4.0
 
 * Support `--split-per-abi` flag and return a list from `flutter_build()` in
