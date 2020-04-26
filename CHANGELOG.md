@@ -1,4 +1,4 @@
-## Unreleased
+## 0.4.1
 
 * Add `coverage_all_imports: true` support to `flutter_generate()`, which would
   generate a test importing all `.dart` files in `lib/`. This will make coverage
