@@ -41,6 +41,9 @@ module Fastlane
             flutter_sdk_root,
           )
         end
+
+        # Return installation path of Flutter SDK.
+        flutter_sdk_root
       end
 
       def self.need_upgrade_to_channel?(flutter_sdk_root, flutter_channel)
