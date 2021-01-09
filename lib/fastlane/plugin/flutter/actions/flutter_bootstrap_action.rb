@@ -34,7 +34,7 @@ module Fastlane
         else
           Helper::FlutterHelper.git(
             'clone', # no --depth limit to keep Flutter tag-based versioning.
-            "--branch=#{flutter_channel || 'beta'}",
+            "--branch=#{flutter_channel || 'stable'}",
             '--quiet',
             '--',
             FLUTTER_REMOTE_REPOSITORY,

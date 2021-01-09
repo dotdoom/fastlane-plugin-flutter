@@ -2,6 +2,7 @@
 
 - Do not print a warning message when not able to parse "flutter build" output
   and "--config-only" argument is present.
+- Install "stable" version of Flutter by default (instead of "beta").
 
 ## 0.4.2
 
