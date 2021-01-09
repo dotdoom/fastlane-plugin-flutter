@@ -1,4 +1,4 @@
-## Unreleased
+## 0.5.0
 
 - Do not print a warning message when not able to parse "flutter build" output
   and "--config-only" argument is present.
