@@ -1,3 +1,8 @@
+## Unreleased
+
+- Do not print a warning message when not able to parse "flutter build" output
+  and "--config-only" argument is present.
+
 ## 0.4.2
 
 - Return Flutter SDK path from `flutter_bootstrap`.
