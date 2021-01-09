@@ -3,7 +3,7 @@ default_platform(:android)
 platform :ios do
   desc "Useful on CI, this lane installs Flutter."
   lane :bootstrap do
-    flutter_bootstrap(flutter_channel: 'beta')
+    flutter_bootstrap(flutter_channel: 'stable')
   end
 end
 
@@ -15,7 +15,7 @@ platform :android do
   desc "must point to a destination directory (which might be empty)."
   lane :bootstrap do
     flutter_bootstrap(
-      flutter_channel: 'beta',
+      flutter_channel: 'stable',
       # Only do this when building for Android, otherwise we would enforce
       # existence of ANDROID_SDK_ROOT environment variable, which is completely
       # unnecessary when building for iOS.
