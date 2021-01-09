@@ -52,16 +52,7 @@ module Fastlane
 
         Helper::FlutterHelper.flutter('build', *build_args) do |status, res|
           if status.success?
-            artifacts = res.scan(/Built (.*?)(:? \([^)]*\))?\.$/).
-                        map { |path| File.absolute_path(path[0]) }
-            if artifacts.size == 1
-              lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts.first
-            elsif artifacts.size > 1
-              # Could be the result of "flutter build apk --split-per-abi".
-              lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts
-            else
-              UI.important('Cannot parse built file path from "flutter build"')
-            end
+            process_build_output(res, build_args)
             # gym (aka build_ios_app) action call may follow build; let's help
             # it identify the project, since Flutter project structure is
             # usually standard.
@@ -122,6 +113,21 @@ form instead.
           if params[:codesign] == false
             build_args.push('--no-codesign')
           end
+        end
+      end
+
+      def self.process_build_output(output, build_args)
+        artifacts = output.scan(/Built (.*?)(:? \([^)]*\))?\.$/).
+                    map { |path| File.absolute_path(path[0]) }
+        if artifacts.size == 1
+          lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts.first
+        elsif artifacts.size > 1
+          # Could be the result of "flutter build apk --split-per-abi".
+          lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts
+        elsif build_args.include?('--config-only')
+          UI.message('Config-only "build" detected, no output file name')
+        else
+          UI.important('Cannot parse built file path from "flutter build"')
         end
       end
 
