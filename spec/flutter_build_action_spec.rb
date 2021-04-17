@@ -103,7 +103,33 @@ describe Fastlane::Actions::FlutterBuildAction do
       it 'build type from fastlane platform' do
         expect(Fastlane::Helper::FlutterHelper).
           to receive(:flutter).
-          with('build', 'ios').
+          with('build', 'ios', '--debug').
+          and_yield(*successful_flutter(''))
+        Fastlane::FastFile.new.parse(<<-FASTLANE).runner.execute(:test)
+          default_platform(:ios)
+          lane :test do
+            flutter_build(debug: true)
+          end
+        FASTLANE
+      end
+
+      it 'build type from fastlane platform (no-codesign builds)' do
+        expect(Fastlane::Helper::FlutterHelper).
+          to receive(:flutter).
+          with('build', 'ios', '--no-codesign').
+          and_yield(*successful_flutter(''))
+        Fastlane::FastFile.new.parse(<<-FASTLANE).runner.execute(:test)
+          default_platform(:ios)
+          lane :test do
+            flutter_build(build_args: %w(--no-codesign))
+          end
+        FASTLANE
+      end
+
+      it 'build type from fastlane platform (release builds)' do
+        expect(Fastlane::Helper::FlutterHelper).
+          to receive(:flutter).
+          with('build', 'ipa').
           and_yield(*successful_flutter(''))
         Fastlane::FastFile.new.parse(<<-FASTLANE).runner.execute(:test)
           default_platform(:ios)

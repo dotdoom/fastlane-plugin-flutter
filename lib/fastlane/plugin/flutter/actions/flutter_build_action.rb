@@ -11,28 +11,12 @@ module Fastlane
     class FlutterBuildAction < Action
       extend FlutterActionBase
 
-      FASTLANE_PLATFORM_TO_BUILD = {
-        ios: 'ios',
-        android: 'apk',
-      }
-
       def self.run(params)
         # "flutter build" args list.
         build_args = []
 
-        if params[:build]
-          build_args.push(params[:build])
-        else
-          if fastlane_platform = (lane_context[SharedValues::PLATFORM_NAME] ||
-                                  lane_context[SharedValues::DEFAULT_PLATFORM])
-            build_args.push(FASTLANE_PLATFORM_TO_BUILD[fastlane_platform])
-          else
-            UI.user_error!('flutter_build action "build" parameter is not ' \
-            'specified and cannot be inferred from Fastlane context.')
-          end
-        end
-
-        process_deprecated_params(params, build_args)
+        build_type = params[:build] || guess_build_type(params)
+        build_args.push(build_type)
 
         if params[:debug]
           build_args.push('--debug')
@@ -68,19 +52,60 @@ module Fastlane
 
         # Fill in some well-known context variables so that next commands may
         # pick them up.
-        case params[:build]
+        case build_type
         when 'apk'
           lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH] =
             lane_context[SharedValues::FLUTTER_OUTPUT]
         when 'appbundle'
           lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH] =
             lane_context[SharedValues::FLUTTER_OUTPUT]
+        when 'ipa'
+          lane_context[SharedValues::IPA_OUTPUT_PATH] =
+            lane_context[SharedValues::FLUTTER_OUTPUT]
         end
 
         lane_context[SharedValues::FLUTTER_OUTPUT]
       end
 
+      def self.guess_build_type(params)
+        if fastlane_platform = (lane_context[SharedValues::PLATFORM_NAME] ||
+          lane_context[SharedValues::DEFAULT_PLATFORM])
+          case fastlane_platform
+          when :ios
+            if (params[:build_args] || []).include?('--no-codesign') ||
+               params[:debug]
+              'ios'
+            else
+              'ipa'
+            end
+          when :android
+            params[:debug] ? 'apk' : 'appbundle'
+          end
+        else
+          UI.user_error!('flutter_build action "build" parameter is not ' \
+          'specified and cannot be inferred from Fastlane context.')
+        end
+      end
+
       def self.publish_gym_defaults(build_args)
+        if build_args.include?('ios') && !build_args.include?('--debug')
+          UI.deprecated(<<-"MESSAGE")
+Building for "ios" without "--debug" will soon no longer populate parameters
+used by gym(). Consider using the new "ipa" build type directly and omitting an
+extra gym() action:
+
+BEFORE:
+
+  flutter_build(build: "ios", build_args: ["--no-codesign"])
+  gym(silent: true, suppress_xcode_output: true)
+
+AFTER:
+
+  flutter_build(build: "ipa")
+
+          MESSAGE
+        end
+
         ENV['GYM_WORKSPACE'] ||= 'ios/Runner.xcworkspace'
         ENV['GYM_BUILD_PATH'] ||= 'build/ios'
         ENV['GYM_OUTPUT_DIRECTORY'] ||= 'build'
@@ -94,24 +119,6 @@ module Fastlane
                 ENV['GYM_SCHEME'] = build_args[index + 1]
               end
             end
-          end
-        end
-      end
-
-      def self.process_deprecated_params(params, build_args)
-        unless params[:codesign].nil?
-          UI.deprecated(<<-"MESSAGE")
-flutter_build parameter "codesign" is deprecated. Use
-
-  flutter_build(
-    build_args: ["--#{params[:codesign] == false ? 'no-' : ''}codesign"]
-  )
-
-form instead.
-          MESSAGE
-
-          if params[:codesign] == false
-            build_args.push('--no-codesign')
           end
         end
       end
@@ -159,14 +166,6 @@ form instead.
             optional: true,
             type: Boolean,
             default_value: false,
-          ),
-          FastlaneCore::ConfigItem.new(
-            key: :codesign,
-            env_name: 'FL_FLUTTER_CODESIGN',
-            description: 'Set to false to skip iOS app signing. This may be ' \
-            'useful e.g. on CI or when signed later by Fastlane "sigh"',
-            optional: true,
-            type: Boolean,
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_number,

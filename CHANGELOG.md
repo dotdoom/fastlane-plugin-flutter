@@ -1,3 +1,9 @@
+## Unreleased
+
+- Remove deprecated "codesign" parameter.
+- Support `build: "ipa"` option to `flutter_build()` and deprecate supplying
+  parameters to [gym](https://docs.fastlane.tools/actions/gym/).
+
 ## 0.5.0
 
 - Do not print a warning message when not able to parse "flutter build" output
