@@ -13,20 +13,16 @@ module Fastlane
       end
 
       def self.flutter_sdk_root
-        vendor_flutter_path = File.join(Dir.pwd, 'vendor', 'flutter')
+        # Support flutterw and compatible projects.
+        # Prefixing directory name with "." has a nice effect that Flutter tools
+        # such as "format" and "lint" will not recurse into this subdirectory
+        # while analyzing the project itself. This works immensely better than
+        # e.g. vendor/flutter.
+        pinned_flutter_path = File.join(Dir.pwd, '.flutter')
+
         @flutter_sdk_root ||= File.expand_path(
-          if flutter_installed?(vendor_flutter_path)
-            vendor_flutter_path
-          elsif flutter_installed?(File.join(Dir.pwd, '.flutter'))
-            # Support flutterw and compatible projects.
-            File.join(Dir.pwd, '.flutter')
-          elsif ENV.include?('FLUTTER_SDK_ROOT')
-            UI.deprecated(
-              'FLUTTER_SDK_ROOT environment variable is deprecated. ' \
-              'To point to a Flutter installation directory, use ' \
-              'FLUTTER_ROOT instead.'
-            )
-            ENV['FLUTTER_SDK_ROOT']
+          if flutter_installed?(pinned_flutter_path)
+            pinned_flutter_path
           elsif ENV.include?('FLUTTER_ROOT')
             # FLUTTER_ROOT is a standard environment variable from Flutter.
             ENV['FLUTTER_ROOT']
@@ -34,7 +30,7 @@ module Fastlane
             File.dirname(File.dirname(flutter_binary))
           else
             # Where we'd prefer to install flutter.
-            File.join(Dir.pwd, 'vendor', 'flutter')
+            pinned_flutter_path
           end
         )
       end
