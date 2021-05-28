@@ -1,3 +1,8 @@
+## 0.6.0
+
+- Support `.flutter` subdirectory for project-specific flutter installation
+  (usually for Flutter version pinning).
+
 ## 0.5.0
 
 - Do not print a warning message when not able to parse "flutter build" output

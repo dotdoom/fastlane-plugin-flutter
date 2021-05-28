@@ -14,7 +14,10 @@ module Fastlane
 
       def self.flutter_sdk_root
         @flutter_sdk_root ||= File.expand_path(
-          if ENV.include?('FLUTTER_SDK_ROOT')
+          if File.executable?(File.join(Dir.pwd, '.flutter', 'bin', 'flutter'))
+            # Support flutterw and compatible projects.
+            File.join(Dir.pwd, '.flutter')
+          elsif ENV.include?('FLUTTER_SDK_ROOT')
             UI.deprecated(
               'FLUTTER_SDK_ROOT environment variable is deprecated. ' \
               'To point to a Flutter installation directory, use ' \
@@ -27,6 +30,7 @@ module Fastlane
           elsif flutter_binary = FastlaneCore::CommandExecutor.which('flutter')
             File.dirname(File.dirname(flutter_binary))
           else
+            # Where we'd prefer to install flutter.
             File.join(Dir.pwd, 'vendor', 'flutter')
           end
         )
