@@ -1,4 +1,4 @@
-## Unreleased
+## 0.6.1
 
 - Detect `vendor/flutter` directory as default Flutter installation if there's a
   Flutter binary inside.
