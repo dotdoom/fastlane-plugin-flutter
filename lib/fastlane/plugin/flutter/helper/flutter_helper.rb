@@ -13,8 +13,11 @@ module Fastlane
       end
 
       def self.flutter_sdk_root
+        vendor_flutter_path = File.join(Dir.pwd, 'vendor', 'flutter')
         @flutter_sdk_root ||= File.expand_path(
-          if File.executable?(File.join(Dir.pwd, '.flutter', 'bin', 'flutter'))
+          if flutter_installed?(vendor_flutter_path)
+            vendor_flutter_path
+          elsif flutter_installed?(File.join(Dir.pwd, '.flutter'))
             # Support flutterw and compatible projects.
             File.join(Dir.pwd, '.flutter')
           elsif ENV.include?('FLUTTER_SDK_ROOT')
@@ -36,13 +39,13 @@ module Fastlane
         )
       end
 
-      def self.flutter_installed?
+      def self.flutter_installed?(custom_flutter_root = nil)
         # Can't use File.executable? because on Windows it has to be .exe.
-        File.exist?(flutter_binary)
+        File.exist?(flutter_binary(custom_flutter_root))
       end
 
-      def self.flutter_binary
-        File.join(flutter_sdk_root, 'bin', 'flutter')
+      def self.flutter_binary(custom_flutter_root = nil)
+        File.join(custom_flutter_root || flutter_sdk_root, 'bin', 'flutter')
       end
 
       def self.dev_dependency?(package)
