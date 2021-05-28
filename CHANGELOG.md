@@ -1,4 +1,4 @@
-## Unreleased
+## 0.6.0
 
 - Support `.flutter` subdirectory for project-specific flutter installation
   (usually for Flutter version pinning).
