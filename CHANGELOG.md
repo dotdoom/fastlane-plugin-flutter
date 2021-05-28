@@ -1,3 +1,8 @@
+## Unreleased
+
+- Obsolete `vendor/flutter` (as it turns out, this never worked very well) and
+  `FLUTTER_SDK_ROOT` environment variable.
+
 ## 0.6.1
 
 - Detect `vendor/flutter` directory as default Flutter installation if there's a
