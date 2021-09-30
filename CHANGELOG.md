@@ -1,4 +1,4 @@
-## Unreleased
+## 0.7.0
 
 - Obsolete `vendor/flutter` (as it turns out, this never worked very well) and
   `FLUTTER_SDK_ROOT` environment variable.
