@@ -22,14 +22,26 @@ module Fastlane
 
         @flutter_sdk_root ||= File.expand_path(
           if flutter_installed?(pinned_flutter_path)
+            UI.message("Determined Flutter location as #{pinned_flutter_path}" \
+              " because 'flutter' executable exists there.")
             pinned_flutter_path
           elsif ENV.include?('FLUTTER_ROOT')
             # FLUTTER_ROOT is a standard environment variable from Flutter.
+            UI.message("Determined Flutter location as #{ENV['FLUTTER_ROOT']}" \
+              " because environment variable FLUTTER_ROOT points there" \
+              " (current directory is #{Dir.pwd}).")
             ENV['FLUTTER_ROOT']
           elsif flutter_binary = FastlaneCore::CommandExecutor.which('flutter')
-            File.dirname(File.dirname(flutter_binary))
+            location = File.dirname(File.dirname(flutter_binary))
+            UI.message("Determined Flutter location as #{location} because"\
+              " 'flutter' executable in PATH is located there" \
+              " (current directory is #{Dir.pwd}).")
+            location
           else
             # Where we'd prefer to install flutter.
+            UI.message("Determined desired Flutter location as" \
+              " #{pinned_flutter_path} because that's where this fastlane" \
+              " plugin would install Flutter by default.")
             pinned_flutter_path
           end
         )

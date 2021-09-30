@@ -26,7 +26,7 @@ platform :android do
   end
 end
 
-desc "Generate files, format, lint and build project."
+desc "Generate files, format, lint, test and build project."
 lane :build do
   # Generate intl and other files.
   flutter_generate(
@@ -49,6 +49,9 @@ lane :build do
 
   # Lint (statically find errors).
   flutter(args: %w(analyze))
+
+  # Run unit tests.
+  flutter(args: %(test))
 
   build_args = []
   if lane_context[SharedValues::PLATFORM_NAME] == :android
@@ -124,7 +127,7 @@ lane :platform_agnostic_end_to_end_test do
     ENV.delete('ANDROID_HOME')
     ENV['ANDROID_SDK_ROOT'] = File.join(root, 'android')
 
-    # Install our dependencies to this temporary directory.
+    # Install our dependencies.
     bootstrap
 
     app = File.join(root, 'myapp')
