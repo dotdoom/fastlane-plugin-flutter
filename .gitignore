@@ -12,3 +12,6 @@ test-results
 /vendor
 
 /.vscode
+
+## end_to_end_test installs Flutter in this directory.
+/.flutter
