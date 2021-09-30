@@ -2,6 +2,8 @@
 
 - Obsolete `vendor/flutter` (as it turns out, this never worked very well) and
   `FLUTTER_SDK_ROOT` environment variable.
+- Be verbose about why a certain Flutter location was determined as current by
+  the plugin.
 
 ## 0.6.1
 
