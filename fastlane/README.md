@@ -19,7 +19,7 @@ or alternatively using `brew install fastlane`
 ```
 fastlane build
 ```
-Generate files, format, lint and build project.
+Generate files, format, lint, test and build project.
 ### platform_agnostic_end_to_end_test
 ```
 fastlane platform_agnostic_end_to_end_test
