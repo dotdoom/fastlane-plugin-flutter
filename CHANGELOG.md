@@ -1,4 +1,4 @@
-## Unreleased
+## 0.7.1
 
 - Remove `coverage_all_imports` file before codegeneration, as the latter may
   sometimes be confused.
