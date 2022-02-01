@@ -1,3 +1,8 @@
+## Unreleased
+
+- Remove `coverage_all_imports` file before codegeneration, as the latter may
+  sometimes be confused.
+
 ## 0.7.0
 
 - Obsolete `vendor/flutter` (as it turns out, this never worked very well) and

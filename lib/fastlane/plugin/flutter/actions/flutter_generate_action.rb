@@ -19,6 +19,11 @@ module Fastlane
       def self.run(params)
         Helper::FlutterHelper.flutter(*%w(packages get)) {}
 
+        if params[:coverage_all_imports] && File.exist?(ALL_IMPORTS_TEST_FILE)
+          # This file may somehow confuse codegeneration (e.g. built_value).
+          File.delete(ALL_IMPORTS_TEST_FILE)
+        end
+
         # In an ideal world, this should be a part of build_runner:
         # https://github.com/dart-lang/intl_translation/issues/32
         # Generate Intl messages before others, since these are static and
