@@ -42,16 +42,6 @@ module Fastlane
         if params[:coverage_all_imports]
           UI.message("Generating #{ALL_IMPORTS_TEST_FILE} for coverage...")
 
-          dart_file_literals = Dir['lib/**/*.dart'].reject do |file_name|
-            # ".g.dart" files often are "part of" files and can not be imported
-            # directly. Commonly coverage for generated files is not that useful
-            file_name.end_with?('.g.dart')
-          end.map do |file_name|
-            Helper::FlutterHelper.
-              import_path_for_test(file_name, '..').
-              gsub("'", "\\\\'")
-          end
-
           File.write(
             ALL_IMPORTS_TEST_FILE,
             <<-DART
@@ -60,12 +50,11 @@ module Fastlane
 // of overall project is calculated correctly. Do not modify this
 // file manually!
 
-// ignore_for_file: unused_import, directives_ordering
-// ignore_for_file: avoid_relative_lib_imports
-// ignore_for_file: lines_longer_than_80_chars
+// https://github.com/flutter/flutter/issues/27997#issuecomment-1644224366
+// ignore: unused_import
+import 'package:#{Helper::FlutterHelper.pub_package_name}/main.dart';
 
-#{dart_file_literals.map { |fn| "import '#{fn}';" }.sort.join("\n")}
-
+// Fake test in order to make each file reachable by the coverage
 void main() {}
             DART
           )
