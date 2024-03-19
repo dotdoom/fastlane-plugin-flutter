@@ -1,3 +1,6 @@
+## 0.8.0
+- If args has `--verbase` then print the flutter command to be executed.
+
 ## 0.7.1
 
 - Remove `coverage_all_imports` file before codegeneration, as the latter may
