@@ -1,3 +1,7 @@
+## 0.9.0
+
+- If args has `--verbase` then print the flutter command to be executed.
+
 ## 0.8.0
 
 - Parse "flutter build" command output even when it doesn't contain a period.
