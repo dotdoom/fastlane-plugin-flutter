@@ -58,7 +58,7 @@ module Fastlane
             # usually standard.
             publish_gym_defaults(build_args)
             if (build_args.include?('--verbose'))
-              res
+              UI.command_output(res)
             end
           else
             # Print stdout from "flutter build" because it may contain useful
