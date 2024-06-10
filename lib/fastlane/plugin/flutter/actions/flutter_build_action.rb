@@ -117,7 +117,7 @@ form instead.
       end
 
       def self.process_build_output(output, build_args)
-        artifacts = output.scan(/Built (.*?)(:? \([^)]*\))?\.$/).
+        artifacts = output.scan(/Built (.*?)(:? \([^)]*\))?[.]?$/).
                     map { |path| File.absolute_path(path[0]) }
         if artifacts.size == 1
           lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts.first

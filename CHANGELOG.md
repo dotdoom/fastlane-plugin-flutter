@@ -1,3 +1,7 @@
+## Unreleased
+
+- Parse "flutter build" command output even when it doesn't contain a period.
+
 ## 0.7.1
 
 - Remove `coverage_all_imports` file before codegeneration, as the latter may
