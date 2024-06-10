@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yaml'
 
 module Fastlane
@@ -5,7 +7,7 @@ module Fastlane
     class FlutterGenerateBuildRunnerHelper
       def self.build
         Helper::FlutterHelper.flutter(
-          *%w(packages pub run build_runner build --delete-conflicting-outputs),
+          *%w[packages pub run build_runner build --delete-conflicting-outputs]
         )
       end
     end

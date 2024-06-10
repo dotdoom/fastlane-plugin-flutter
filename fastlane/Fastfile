@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 default_platform(:android)
 
 platform :ios do
-  desc "Useful on CI, this lane installs Flutter."
+  desc 'Useful on CI, this lane installs Flutter.'
   lane :bootstrap do
     flutter_bootstrap(flutter_channel: 'stable')
   end
 end
 
 platform :android do
-  desc "Useful on CI, this lane installs Flutter and accepts some of the"
-  desc "Android SDK licenses. Note that it does not install Android SDK itself,"
-  desc "which is installed by Gradle automatically during the first build."
-  desc "Nevertheless, ANDROID_SDK_ROOT or ANDROID_HOME environment variable"
-  desc "must point to a destination directory (which might be empty)."
+  desc 'Useful on CI, this lane installs Flutter and accepts some of the'
+  desc 'Android SDK licenses. Note that it does not install Android SDK itself,'
+  desc 'which is installed by Gradle automatically during the first build.'
+  desc 'Nevertheless, ANDROID_SDK_ROOT or ANDROID_HOME environment variable'
+  desc 'must point to a destination directory (which might be empty).'
   lane :bootstrap do
     flutter_bootstrap(
       flutter_channel: 'stable',
@@ -20,13 +22,13 @@ platform :android do
       # existence of ANDROID_SDK_ROOT environment variable, which is completely
       # unnecessary when building for iOS.
       android_licenses: {
-        'android-sdk-license' => '24333f8a63b6825ea9c5514f83c2829b004d1fee',
-      },
+        'android-sdk-license' => '24333f8a63b6825ea9c5514f83c2829b004d1fee'
+      }
     )
   end
 end
 
-desc "Generate files, format, lint, test and build project."
+desc 'Generate files, format, lint, test and build project.'
 lane :build do
   # Generate intl and other files.
   flutter_generate(
@@ -36,11 +38,11 @@ lane :build do
     intl_strings_locale: 'en_US',
     # Generate a file in test/ directory which imports all .dart files in the
     # project. This helps coverage tools account for files with zero coverage.
-    coverage_all_imports: true,
+    coverage_all_imports: true
   )
 
   # Reformat the source code.
-  flutter(args: %w(format .))
+  flutter(args: %w[format .])
 
   # Uncomment the following on CI. For Git repositories, it will verify that
   # 'format' and 'generate' actions didn't change anything from what a developer
@@ -48,7 +50,7 @@ lane :build do
   # ensure_git_status_clean
 
   # Lint (statically find errors).
-  flutter(args: %w(analyze))
+  flutter(args: %w[analyze])
 
   # Run unit tests.
   flutter(args: %(test))
@@ -75,7 +77,7 @@ lane :build do
     build_name: '1.2.3',
 
     # Demo of custom build arguments appended to "flutter build" command line.
-    build_args: build_args,
+    build_args:
   )
 
   # NOTE: for iOS, output_file will point to a .app directory instead of an
@@ -114,7 +116,7 @@ platform :android do
 end
 
 desc "This is an internal test for Fastlane Flutter plugin. You shouldn't"
-desc "need to do anything like that in your Fastfile."
+desc 'need to do anything like that in your Fastfile.'
 desc "It uses 'bootstrap' lane from above to install Flutter, then creates a"
 desc "temporary (but real) Flutter project, and builds it via 'build' lane."
 lane :platform_agnostic_end_to_end_test do
@@ -137,11 +139,11 @@ lane :platform_agnostic_end_to_end_test do
     # (and validate) generators.
     pubspec = File.join(app, 'pubspec.yaml')
     File.write(pubspec, File.read(pubspec).sub(
-      "dependencies:",
+      'dependencies:',
       "dependencies:\n" \
       "  built_value:\n"
     ).sub(
-      "dev_dependencies:",
+      'dev_dependencies:',
       "dev_dependencies:\n" \
       "  build_runner:\n" \
       "  built_value_generator:\n"

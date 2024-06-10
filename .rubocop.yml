@@ -1,178 +1,38 @@
 ---
-Style/MultipleComparison:
-  Enabled: false
-Style/PercentLiteralDelimiters:
-  Enabled: false
-Style/ClassCheck:
-  EnforcedStyle: kind_of?
-Style/FrozenStringLiteralComment:
-  Enabled: false
-Style/SafeNavigation:
-  Enabled: false
-Performance/RegexpMatch:
-  Enabled: false
-Performance/StringReplacement:
-  Enabled: false
-Performance/FixedSize:
-  Enabled: false
-Style/NumericPredicate:
-  Enabled: false
-Metrics/BlockLength:
-  Enabled: false
-Metrics/BlockNesting:
-  Enabled: false
-Metrics/ModuleLength:
-  Enabled: false
-Style/VariableNumber:
-  Enabled: false
-Style/MethodMissing:
-  Enabled: false
-MultilineBlockChain:
-  Enabled: false
-Style/NumericLiteralPrefix:
-  Enabled: false
-Style/TernaryParentheses:
-  Enabled: false
-Style/EmptyMethod:
-  Enabled: false
-Style/BracesAroundHashParameters:
-  Enabled: false
-Lint/AmbiguousOperator:
-  Enabled: false
-Lint/AssignmentInCondition:
-  Enabled: false
-Lint/UselessAssignment:
-  Exclude:
-  - "**/spec/**/*"
-Lint/UnneededSplatExpansion:
-  Enabled: false
-Layout/IndentHash:
-  Enabled: false
-Layout/AlignHash:
-  Enabled: false
-Layout/DotPosition:
-  Enabled: false
-Style/DoubleNegation:
-  Enabled: false
-Style/SymbolArray:
-  Enabled: false
-Layout/IndentHeredoc:
-  Enabled: false
-Style/MixinGrouping:
-  Exclude:
-  - "**/spec/**/*"
-Lint/HandleExceptions:
-  Enabled: false
-Lint/UnusedBlockArgument:
-  Enabled: false
-Lint/AmbiguousBlockAssociation:
-  Enabled: false
-Style/GlobalVars:
-  Enabled: false
-Style/ClassAndModuleChildren:
-  Enabled: false
-Style/SpecialGlobalVars:
-  Enabled: false
+require:
+  - rubocop-rake
+  - rubocop-rspec
+
+# Pre existing findings.  May be good to fix one day.
 Metrics/AbcSize:
-  Enabled: false
-Metrics/MethodLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-Style/WordArray:
-  MinSize: 19
-Style/SignalException:
-  Enabled: false
-Style/RedundantReturn:
-  Enabled: false
-Style/IfUnlessModifier:
-  Enabled: false
-Style/AndOr:
-  Enabled: true
-  EnforcedStyle: conditionals
 Metrics/ClassLength:
-  Max: 320
-Metrics/LineLength:
-  Max: 370
-Metrics/ParameterLists:
-  Max: 17
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
 Metrics/PerceivedComplexity:
-  Max: 18
-Style/GuardClause:
   Enabled: false
-Style/StringLiterals:
+Metrics/BlockLength:
   Enabled: false
-Style/ConditionalAssignment:
+Gemspec/RequiredRubyVersion:
   Enabled: false
-Style/RedundantSelf:
+RSpec/FilePath:
   Enabled: false
-Lint/UnusedMethodArgument:
+Naming/PredicateName:
   Enabled: false
-Lint/ParenthesesAsGroupedExpression:
-  Exclude:
-  - "**/spec/**/*"
-Style/PredicateName:
+Style/MultilineBlockChain:
   Enabled: false
-Style/PerlBackrefs:
-  Enabled: false
-Layout/SpaceAroundOperators:
-  Exclude:
-  - "**/spec/actions_specs/xcodebuild_spec.rb"
-AllCops:
-  TargetRubyVersion: 2.0
-  Include:
-  - "*/lib/assets/*Template"
-  - "*/lib/assets/*TemplateAndroid"
-  Exclude:
-  - "**/lib/assets/custom_action_template.rb"
-  - "./vendor/**/*"
-  - "**/lib/assets/DefaultFastfileTemplate"
-Style/FileName:
-  Exclude:
-  - "**/Dangerfile"
-  - "**/Brewfile"
-  - "**/Gemfile"
-  - "**/Podfile"
-  - "**/Rakefile"
-  - "**/Fastfile"
-  - "**/Deliverfile"
-  - "**/Snapfile"
-  - "**/*.gemspec"
 Style/Documentation:
   Enabled: false
-Style/MutableConstant:
+RSpec/MessageSpies:
   Enabled: false
-Style/ZeroLengthPredicate:
+RSpec/StubbedMock:
   Enabled: false
-Style/IfInsideElse:
+RSpec/ExampleLength:
   Enabled: false
-Style/CollectionMethods:
+RSpec/ExpectInHook:
   Enabled: false
-Style/TrailingCommaInArguments:
+RSpec/MultipleExpectations:
   Enabled: false
-Style/TrailingCommaInLiteral:
-  Enabled: false
-Style/MethodCallWithArgsParentheses:
-  Enabled: true
-  IgnoredMethods:
-  - require
-  - require_relative
-  - gem
-  - program
-  - command
-  - raise
-  - attr_accessor
-  - attr_reader
-  - desc
-  - lane
-  - private_lane
-  - platform
-  - to
-  - not_to
-  - describe
-  - it
-  - be
-  - context
-  - before
-  - after
-  - sh

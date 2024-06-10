@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fastlane_core/ui/ui'
 require 'fileutils'
 
@@ -10,6 +12,7 @@ module Fastlane
           license_file = File.join(licenses_directory, license)
           next if File.exist?(license_file) &&
                   File.readlines(license_file).map(&:strip).include?(hash)
+
           UI.message("Updating Android SDK license in #{license_file}...")
           File.open(license_file, 'a') { |f| f.puts('', hash) }
         end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fastlane/action'
 require_relative '../base/flutter_action_base'
 require_relative '../helper/flutter_helper'
@@ -13,8 +15,8 @@ module Fastlane
 
       FASTLANE_PLATFORM_TO_BUILD = {
         ios: 'ios',
-        android: 'apk',
-      }
+        android: 'apk'
+      }.freeze
 
       def self.run(params)
         # "flutter build" args list.
@@ -22,28 +24,24 @@ module Fastlane
 
         if params[:build]
           build_args.push(params[:build])
-        else
-          if fastlane_platform = (lane_context[SharedValues::PLATFORM_NAME] ||
+        elsif (fastlane_platform = lane_context[SharedValues::PLATFORM_NAME] ||
                                   lane_context[SharedValues::DEFAULT_PLATFORM])
-            build_args.push(FASTLANE_PLATFORM_TO_BUILD[fastlane_platform])
-          else
-            UI.user_error!('flutter_build action "build" parameter is not ' \
-            'specified and cannot be inferred from Fastlane context.')
-          end
+          build_args.push(FASTLANE_PLATFORM_TO_BUILD[fastlane_platform])
+        else
+          UI.user_error!('flutter_build action "build" parameter is not ' \
+          'specified and cannot be inferred from Fastlane context.')
         end
 
         process_deprecated_params(params, build_args)
 
-        if params[:debug]
-          build_args.push('--debug')
-        end
+        build_args.push('--debug') if params[:debug]
 
-        if build_number = (params[:build_number] ||
+        if (build_number = params[:build_number] ||
                            lane_context[SharedValues::BUILD_NUMBER])
           build_args.push('--build-number', build_number.to_s)
         end
 
-        if build_name = (params[:build_name] ||
+        if (build_name = params[:build_name] ||
                          lane_context[SharedValues::VERSION_NUMBER])
           build_args.push('--build-name', build_name.to_s)
         end
@@ -84,41 +82,41 @@ module Fastlane
         ENV['GYM_WORKSPACE'] ||= 'ios/Runner.xcworkspace'
         ENV['GYM_BUILD_PATH'] ||= 'build/ios'
         ENV['GYM_OUTPUT_DIRECTORY'] ||= 'build'
-        unless ENV.include?('GYM_SCHEME')
-          # Do some parsing on args. Is there a less ugly way?
-          build_args.each.with_index do |arg, index|
-            if arg.start_with?('--flavor', '-flavor')
-              if arg.include?('=')
-                ENV['GYM_SCHEME'] = arg.split('=', 2).last
-              else
-                ENV['GYM_SCHEME'] = build_args[index + 1]
-              end
-            end
+        return if ENV.include?('GYM_SCHEME')
+
+        # Do some parsing on args. Is there a less ugly way?
+        build_args.each.with_index do |arg, index|
+          if arg.start_with?('--flavor', '-flavor')
+            ENV['GYM_SCHEME'] = if arg.include?('=')
+                                  arg.split('=', 2).last
+                                else
+                                  build_args[index + 1]
+                                end
           end
         end
       end
 
       def self.process_deprecated_params(params, build_args)
-        unless params[:codesign].nil?
-          UI.deprecated(<<-"MESSAGE")
-flutter_build parameter "codesign" is deprecated. Use
+        return if params[:codesign].nil?
 
-  flutter_build(
-    build_args: ["--#{params[:codesign] == false ? 'no-' : ''}codesign"]
-  )
+        UI.deprecated(<<~"MESSAGE")
+          flutter_build parameter "codesign" is deprecated. Use
 
-form instead.
-          MESSAGE
+            flutter_build(
+              build_args: ["--#{params[:codesign] == false ? 'no-' : ''}codesign"]
+            )
 
-          if params[:codesign] == false
-            build_args.push('--no-codesign')
-          end
-        end
+          form instead.
+        MESSAGE
+
+        return unless params[:codesign] == false
+
+        build_args.push('--no-codesign')
       end
 
       def self.process_build_output(output, build_args)
-        artifacts = output.scan(/Built (.*?)(:? \([^)]*\))?[.]?$/).
-                    map { |path| File.absolute_path(path[0]) }
+        artifacts = output.scan(/Built (.*?)(:? \([^)]*\))?[.]?$/)
+                          .map { |path| File.absolute_path(path[0]) }
         if artifacts.size == 1
           lane_context[SharedValues::FLUTTER_OUTPUT] = artifacts.first
         elsif artifacts.size > 1
@@ -150,7 +148,7 @@ form instead.
             env_name: 'FL_FLUTTER_BUILD',
             description: 'Type of Flutter build (e.g. apk, appbundle, ios)',
             optional: true,
-            type: String,
+            type: String
           ),
           FastlaneCore::ConfigItem.new(
             key: :debug,
@@ -158,7 +156,7 @@ form instead.
             description: 'Build a Debug version of the app if true',
             optional: true,
             type: Boolean,
-            default_value: false,
+            default_value: false
           ),
           FastlaneCore::ConfigItem.new(
             key: :codesign,
@@ -166,14 +164,14 @@ form instead.
             description: 'Set to false to skip iOS app signing. This may be ' \
             'useful e.g. on CI or when signed later by Fastlane "sigh"',
             optional: true,
-            type: Boolean,
+            type: Boolean
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_number,
             env_name: 'FL_FLUTTER_BUILD_NUMBER',
             description: 'Override build number specified in pubspec.yaml',
             optional: true,
-            type: Integer,
+            type: Integer
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_name,
@@ -183,14 +181,14 @@ form instead.
               NOTE: for App Store, build name must be in the format of at most 3
                     integeres separated by a dot (".").
             DESCRIPTION
-            optional: true,
+            optional: true
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_args,
             description: 'An array of extra arguments for "flutter build"',
             optional: true,
-            type: Array,
-          ),
+            type: Array
+          )
         ]
       end
     end

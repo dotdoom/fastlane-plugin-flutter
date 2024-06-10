@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fastlane/plugin/flutter/version'
 
 module Fastlane
