@@ -42,7 +42,9 @@ lane :build do
   )
 
   # Reformat the source code.
-  flutter(args: %w[format .])
+  # This does not work, since the "format" command has been removed but
+  # the deprecation warning mentioned a replacement that does not exist.
+  #flutter(args: %w[format .])
 
   # Uncomment the following on CI. For Git repositories, it will verify that
   # 'format' and 'generate' actions didn't change anything from what a developer

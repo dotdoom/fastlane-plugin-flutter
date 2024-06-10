@@ -36,3 +36,5 @@ RSpec/ExpectInHook:
   Enabled: false
 RSpec/MultipleExpectations:
   Enabled: false
+Layout/LeadingCommentSpace:
+  Enabled: false
