@@ -18,7 +18,7 @@ Metrics/BlockLength:
   Enabled: false
 Gemspec/RequiredRubyVersion:
   Enabled: false
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   Enabled: false
 Naming/PredicateName:
   Enabled: false
