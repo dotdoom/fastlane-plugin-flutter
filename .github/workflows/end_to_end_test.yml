@@ -31,6 +31,12 @@ jobs:
         run: bundle exec rake
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: 'Install JDK'
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'zulu'
       # For Windows: error: unable to create file <...>: Filename too long
       - run: git config --global core.longpaths true
       - run: bundle exec fastlane ${{ matrix.platform }} end_to_end_test
