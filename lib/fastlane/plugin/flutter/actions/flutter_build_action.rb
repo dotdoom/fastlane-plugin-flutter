@@ -55,6 +55,9 @@ module Fastlane
             # it identify the project, since Flutter project structure is
             # usually standard.
             publish_gym_defaults(build_args)
+            if (build_args.include?('--verbose'))
+              UI.command_output(res)
+            end
           else
             # Print stdout from "flutter build" because it may contain useful
             # details about failures, and it's normally not very verbose.
