@@ -1,4 +1,4 @@
-## Unreleased
+## 0.8.0
 
 - Parse "flutter build" command output even when it doesn't contain a period.
 
