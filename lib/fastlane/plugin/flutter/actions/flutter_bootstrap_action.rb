@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fastlane/action'
 require_relative '../base/flutter_action_base'
 require_relative '../helper/flutter_helper'
@@ -14,7 +16,7 @@ module Fastlane
         if params[:android_licenses]
           Helper::FlutterBootstrapHelper.accept_licenses(
             File.join(android_sdk_root!, 'licenses'),
-            params[:android_licenses],
+            params[:android_licenses]
           )
         end
 
@@ -38,7 +40,7 @@ module Fastlane
             '--quiet',
             '--',
             FLUTTER_REMOTE_REPOSITORY,
-            flutter_sdk_root,
+            flutter_sdk_root
           )
         end
 
@@ -52,19 +54,19 @@ module Fastlane
 
         remote_hash = Helper::FlutterHelper.git(
           'ls-remote', FLUTTER_REMOTE_REPOSITORY, flutter_channel
-        ) do |status, output, errors_thread|
+        ) do |status, output, _errors_thread|
           output.split[0].strip if status.success?
         end
         local_hash = Helper::FlutterHelper.git(
           '-C', flutter_sdk_root, 'rev-parse', 'HEAD'
-        ) do |status, output, errors_thread|
+        ) do |status, output, _errors_thread|
           output.strip if status.success?
         end
 
         if !local_hash.nil? && local_hash == remote_hash
-          UI.message("Local and remote Flutter repository hashes match " \
+          UI.message('Local and remote Flutter repository hashes match ' \
                      "(#{local_hash}), no upgrade necessary. Keeping Git " \
-                     "index untouched!")
+                     'index untouched!')
           false
         else
           UI.message("Local hash (#{local_hash}) of Flutter repository " \
@@ -94,7 +96,7 @@ module Fastlane
             env_name: 'FL_FLUTTER_CHANNEL',
             description: 'Flutter SDK channel (keep existing if unset)',
             optional: true,
-            type: String,
+            type: String
           ),
           FastlaneCore::ConfigItem.new(
             key: :flutter_auto_upgrade,
@@ -102,7 +104,7 @@ module Fastlane
             description: 'Automatically upgrade Flutter when already installed',
             default_value: true,
             optional: true,
-            is_string: false, # official replacement for "type: Boolean"
+            is_string: false # official replacement for "type: Boolean"
           ),
           FastlaneCore::ConfigItem.new(
             key: :android_licenses,
@@ -111,8 +113,8 @@ module Fastlane
             '$ANDROID_SDK_ROOT/licenses/ on developer workstations. Gradle ' \
             'will refuse to install SDK unless licenses are accepted',
             optional: true,
-            type: Hash,
-          ),
+            type: Hash
+          )
         ]
       end
     end

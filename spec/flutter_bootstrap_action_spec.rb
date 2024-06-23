@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'climate_control'
 
 describe Fastlane::Actions::FlutterBootstrapAction do
@@ -24,16 +26,16 @@ describe Fastlane::Actions::FlutterBootstrapAction do
           ANDROID_HOME: nil,
           ANDROID_SDK_ROOT: '/tmp/android_sdk_root'
         ) do
-          expect(Fastlane::Helper::FlutterBootstrapHelper).
-            to receive(:accept_licenses).
-            with('/tmp/android_sdk_root/licenses', { sdk: 'abcdef' })
+          expect(Fastlane::Helper::FlutterBootstrapHelper)
+            .to receive(:accept_licenses)
+            .with('/tmp/android_sdk_root/licenses', { sdk: 'abcdef' })
 
-          expect(Fastlane::Helper::FlutterHelper).
-            to receive(:flutter_installed?).
-            and_return(true)
-          expect(Fastlane::Helper::FlutterHelper).
-            to receive(:flutter_sdk_root).
-            and_return('/tmp/flutter')
+          expect(Fastlane::Helper::FlutterHelper)
+            .to receive(:flutter_installed?)
+            .and_return(true)
+          expect(Fastlane::Helper::FlutterHelper)
+            .to receive(:flutter_sdk_root)
+            .and_return('/tmp/flutter')
 
           Fastlane::FastFile.new.parse(<<-FASTLANE).runner.execute(:test)
             lane :test do
@@ -50,16 +52,16 @@ describe Fastlane::Actions::FlutterBootstrapAction do
     end
 
     describe 'flutter_...' do
-      before (:each) do
-        expect(Fastlane::Helper::FlutterHelper).
-          to receive(:flutter_sdk_root).
-          and_return('/tmp/flutter')
+      before do
+        expect(Fastlane::Helper::FlutterHelper)
+          .to receive(:flutter_sdk_root)
+          .and_return('/tmp/flutter')
       end
 
       it 'Returns SDK path when Flutter is installed and no updates asked' do
-        expect(Fastlane::Helper::FlutterHelper).
-          to receive(:flutter_installed?).
-          and_return(true)
+        expect(Fastlane::Helper::FlutterHelper)
+          .to receive(:flutter_installed?)
+          .and_return(true)
 
         path = Fastlane::FastFile.new.parse(<<-FASTLANE).runner.execute(:test)
           lane :test do

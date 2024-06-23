@@ -18,9 +18,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.5
+          ruby-version: 3.3
       # Have to split multiple commands into steps due to a bug on Windows:
       # https://github.community/t5/GitHub-Actions/Windows-multi-line-step-run/td-p/30428
       - run: gem install --no-doc bundler
@@ -31,6 +31,12 @@ jobs:
         run: bundle exec rake
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: 'Install JDK'
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'zulu'
       # For Windows: error: unable to create file <...>: Filename too long
       - run: git config --global core.longpaths true
       - run: bundle exec fastlane ${{ matrix.platform }} end_to_end_test
